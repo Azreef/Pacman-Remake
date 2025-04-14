@@ -26,14 +26,20 @@ public:
 	void GenerateMaze();
 
 	UPROPERTY(EditAnywhere)
-	UTexture2D* mazeTexture;
+	UTexture2D* _MazeTexture;
 
 	UPROPERTY(EditAnywhere)
-	float tileSize = 100;
+	float _TileSize = 100;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> wall;
+	TSubclassOf<AActor> _Wall;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> dots;
+	TSubclassOf<AActor> _Dots;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> _PacMan;
+
+	UPROPERTY(EditAnywhere)
+	bool _IsSpawningDots = true;
 };

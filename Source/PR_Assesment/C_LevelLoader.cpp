@@ -27,11 +27,11 @@ void AC_LevelLoader::Tick(float DeltaTime)
 
 void AC_LevelLoader::GenerateMaze()
 {
-	
-	FTexture2DMipMap& mipMap = mazeTexture->GetPlatformData()->Mips[0];
+	//Getting Pixel Data
+	FTexture2DMipMap& mipMap = _MazeTexture->GetPlatformData()->Mips[0];
 	FByteBulkData* rawImageData = &mipMap.BulkData;
-
 	FColor* allPixel = static_cast<FColor*>(rawImageData->Lock(LOCK_READ_ONLY));
+	
 	int32 mazeWidth = mipMap.SizeX;
 	int32 mazeHeight = mipMap.SizeY;
 
@@ -42,18 +42,23 @@ void AC_LevelLoader::GenerateMaze()
 			int32 currentIndex = Y * mazeWidth + X;
 			FColor currentPixel = allPixel[currentIndex];
 
-			FVector spawnLocation = GetActorLocation() + FVector(X * tileSize, Y * tileSize, 0);
+			FVector spawnLocation = GetActorLocation() + FVector(X * _TileSize, Y * _TileSize, 0);
 
-			// Example: Define wall, path, pellet using color
-			if (currentPixel == FColor::Black )
-			{
-				GetWorld()->SpawnActor<AActor>(wall, spawnLocation, FRotator::ZeroRotator);
-			}
-			else if(currentPixel == FColor::Yellow)
-			{
-				GetWorld()->SpawnActor<AActor>(dots, spawnLocation, FRotator::ZeroRotator);
-			}
 			
+			if (currentPixel == FColor::Black )//Spawn Wall
+			{
+				GetWorld()->SpawnActor<AActor>(_Wall, spawnLocation, FRotator::ZeroRotator);
+			}
+			else if(currentPixel == FColor::Yellow && _IsSpawningDots)//Spawn Dots
+			{
+				GetWorld()->SpawnActor<AActor>(_Dots, spawnLocation, FRotator::ZeroRotator);
+			}
+			else if (currentPixel == FColor::Blue)//Spawn Player
+			{
+				if (GEngine)
+					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("SPAWN PACMAN"));
+				GetWorld()->SpawnActor<AActor>(_PacMan, spawnLocation, FRotator::ZeroRotator);
+			}
 		}
 	}
 

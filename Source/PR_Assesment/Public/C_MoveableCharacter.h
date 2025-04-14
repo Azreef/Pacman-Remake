@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Kismet/GameplayStatics.h"
 #include "C_MoveableCharacter.generated.h"
 
 UCLASS()
@@ -34,12 +35,16 @@ public:
 	void UpdateMovement(float deltaTime);
 	FVector2D ConvertWorldToGrid(FVector worldLocation);
 	FVector ConvertGridToWorld(FVector2D gridLocation);
+	void SetMazeGrid(TArray<TArray<bool>>& mazeGrid);
+	bool CheckWalkableGrid(FVector2D gridLocation);
 
 	FVector2D _CurrentGridPosition;
 	FVector2D _TargetGridPosition;
 	FVector2D _MovingDirection;
 	float _TileSize = 100;
 	float _MoveSpeed = 500;
+
+	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
 
 
 };

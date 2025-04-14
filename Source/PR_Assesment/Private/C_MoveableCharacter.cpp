@@ -3,6 +3,7 @@
 
 #include "C_MoveableCharacter.h"
 
+
 // Sets default values
 AC_MoveableCharacter::AC_MoveableCharacter()
 {
@@ -52,6 +53,7 @@ void AC_MoveableCharacter::MoveRight()
 void AC_MoveableCharacter::MoveLeft()
 {
 	_MovingDirection = FVector2D(-1, 0);
+
 }
 
 
@@ -61,12 +63,8 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 	_CurrentGridPosition = ConvertWorldToGrid(currentPosition);
 
 
-	/*GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "ACTOR LOC:" + GetActorLocation().ToString());
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "TARGET LOC:" + ConvertGridToWorld(_TargetGridPosition).ToString());*/
-
 	if (!GetActorLocation().Equals(ConvertGridToWorld(_TargetGridPosition), 1))
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "MOVING");
 		
 		FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, _MoveSpeed);
 		
@@ -75,9 +73,17 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 	
 	if (!_MovingDirection.IsZero())
 	{
-		 _TargetGridPosition = _CurrentGridPosition + _MovingDirection;
+		FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
 
-		//_MovingDirection = FVector2D::ZeroVector;
+		if (CheckWalkableGrid(nextGrid))
+		{
+			_TargetGridPosition = nextGrid;
+		}
+		else
+		{
+			_MovingDirection = FVector2D::ZeroVector;
+		}
+		
 	}
 
 }
@@ -92,5 +98,29 @@ FVector2D AC_MoveableCharacter::ConvertWorldToGrid(FVector worldLocation) //Used
 FVector AC_MoveableCharacter::ConvertGridToWorld(FVector2D gridLocation) //Used to Convert Grid Position to World Position, FVector to FVector2D
 {
 	return FVector(gridLocation.X * _TileSize, gridLocation.Y * _TileSize, 0);
+}
+
+void AC_MoveableCharacter::SetMazeGrid(TArray<TArray<bool>>& mazeGrid)
+{
+	_MazeGrid = mazeGrid;
+
+	//DEBUG
+	for (int32 Y = 0; Y < _MazeGrid.Num(); Y++)
+	{
+		FString RowString;
+
+		for (int32 X = 0; X < _MazeGrid[Y].Num(); X++)
+		{
+			RowString += _MazeGrid[Y][X] ? TEXT("1 ") : TEXT("0 ");
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *RowString);
+	}
+
+}
+
+bool AC_MoveableCharacter::CheckWalkableGrid(FVector2D gridLocation)
+{
+	return _MazeGrid[gridLocation.X][gridLocation.Y];
 }
 

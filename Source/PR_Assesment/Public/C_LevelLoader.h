@@ -45,4 +45,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool _IsSpawningDots = true;
+
+	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
 };

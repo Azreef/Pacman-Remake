@@ -30,7 +30,6 @@ void AC_PacManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 void AC_PacManCharacter::Move(const FInputActionValue& movementValue)
 {
 	
-	
 	FVector2D moveDirection = movementValue.Get<FVector2D>();
 
 	if (moveDirection.X > 0.5f)

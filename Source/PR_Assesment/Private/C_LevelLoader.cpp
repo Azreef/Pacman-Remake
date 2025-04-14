@@ -2,6 +2,7 @@
 
 
 #include "C_LevelLoader.h"
+#include "C_MoveableCharacter.h"
 
 // Sets default values
 AC_LevelLoader::AC_LevelLoader()
@@ -35,6 +36,16 @@ void AC_LevelLoader::GenerateMaze()
 	int32 mazeWidth = mipMap.SizeX;
 	int32 mazeHeight = mipMap.SizeY;
 
+	bool isPacManExist = false;
+	FVector pacManSpawnLocation;
+
+	//Initialise _MazeGrid 2D Array
+	_MazeGrid.SetNum(mazeWidth);
+	for (TArray<bool>& currentRow : _MazeGrid)
+	{
+		currentRow.SetNum(mazeHeight);
+	}
+
 	for (int32 Y = 0; Y < mazeHeight; Y++)
 	{
 		for (int32 X = 0; X < mazeWidth; X++)
@@ -44,22 +55,38 @@ void AC_LevelLoader::GenerateMaze()
 
 			FVector spawnLocation = GetActorLocation() + FVector(X * _TileSize, Y * _TileSize, 0);
 
-			
+			bool isWalkable = true;
+
 			if (currentPixel == FColor::Black )//Spawn Wall
 			{
 				GetWorld()->SpawnActor<AActor>(_Wall, spawnLocation, FRotator::ZeroRotator);
+
+				isWalkable = false;
+				
 			}
 			else if(currentPixel == FColor::Yellow && _IsSpawningDots)//Spawn Dots
 			{
 				GetWorld()->SpawnActor<AActor>(_Dots, spawnLocation, FRotator::ZeroRotator);
+
 			}
 			else if (currentPixel == FColor::Blue)//Spawn Player
 			{
-				if (GEngine)
-					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("SPAWN PACMAN"));
-				GetWorld()->SpawnActor<AActor>(_PacMan, spawnLocation, FRotator::ZeroRotator);
+				isPacManExist = true;
+				pacManSpawnLocation = spawnLocation;
 			}
+
+			_MazeGrid[X][Y] = isWalkable;
 		}
+	}
+
+	if (isPacManExist)
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("SPAWN PACMAN"));
+
+		AActor* pacMan = GetWorld()->SpawnActor<AActor>(_PacMan, pacManSpawnLocation, FRotator::ZeroRotator);
+
+		Cast<AC_MoveableCharacter>(pacMan)->SetMazeGrid(_MazeGrid); 
 	}
 
 	rawImageData->Unlock();

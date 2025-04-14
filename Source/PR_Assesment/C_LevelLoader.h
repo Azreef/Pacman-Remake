@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Camera/CameraActor.h"
+#include "Kismet/GameplayStatics.h"
 #include "C_LevelLoader.generated.h"
 
 UCLASS()
@@ -24,6 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void GenerateMaze();
+	void SpawnCamera(FVector2D cameraPosition, float zoom);
 
 	UPROPERTY(EditAnywhere)
 	UTexture2D* _MazeTexture;

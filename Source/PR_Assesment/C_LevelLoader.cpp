@@ -64,6 +64,21 @@ void AC_LevelLoader::GenerateMaze()
 
 	rawImageData->Unlock();
 
+	FVector2D middlePosition = FVector2D((mazeWidth * _TileSize) / 2, (mazeHeight * _TileSize) / 2);
+	SpawnCamera(middlePosition, 30 * _TileSize);
+}
+
+void AC_LevelLoader::SpawnCamera(FVector2D cameraPosition, float zoom)
+{
+	ACameraActor* mainCamera = GetWorld()->SpawnActor<ACameraActor>();
+
+	FTransform cameraTransform(FRotator{ -90.0, 0, 270 }, FVector{ cameraPosition.X, cameraPosition.Y, zoom }, FVector{ 1.0f, 1.0f, 1.0f });
+
+	mainCamera->SetActorTransform(cameraTransform);
+
+	APlayerController* playerController = UGameplayStatics::GetPlayerController(this, 0);
+	
+	playerController->SetViewTargetWithBlend(mainCamera);
 
 
 }

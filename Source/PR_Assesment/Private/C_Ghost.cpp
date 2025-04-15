@@ -28,8 +28,6 @@ void AC_Ghost::Tick(float DeltaTime)
         
        UpdateDirection();
        
-        
-
     }
 }
 
@@ -41,23 +39,21 @@ void AC_Ghost::UpdateDirection()
     if (CheckAvailableIntersection(false, availableDirection))
     {
 
-
-
         //GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HAS INTERSECTION"));
         //if (GEngine)
         //    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, _CurrentGridPosition.ToString()); 
         ////Ghost is at Intersection
 
-        MoveTo(GetClosestPathTile(availableDirection));
+        MoveTo(GetTargetTile(availableDirection));
 
 
     }
 
 }
 
-FVector2D AC_Ghost::GetTargetTile()
-{
 
+FVector2D AC_Ghost::GetTargetTile(TArray<FVector2D>& availableDirection)
+{
     return FVector2D();
 }
 
@@ -75,7 +71,6 @@ bool AC_Ghost::CheckAvailableIntersection(bool isIgnoringDirection, TArray<FVect
             continue;
         }
 
-
         //FIntPoint NewIndex = CurrentIndex + Dir;
         FVector2D nextGrid = _CurrentGridPosition + currentDirection;
 
@@ -84,7 +79,6 @@ bool AC_Ghost::CheckAvailableIntersection(bool isIgnoringDirection, TArray<FVect
             
             availableDirection.Add(currentDirection);
         }
-
     }
 
     /*if (GEngine)
@@ -98,41 +92,6 @@ bool AC_Ghost::CheckAvailableIntersection(bool isIgnoringDirection, TArray<FVect
     return isAtIntersection;
 }
 
-FVector2D AC_Ghost::GetClosestPathTile(TArray<FVector2D>& availableDirection)
-{
-    float shortestDistance = 100;
-    FVector2D bestDirection = _MovingDirection;
-
-    //FVector2D bestDirection;
-
-    for (FVector2D& currentDirection : availableDirection)
-    {
-        float currentDistance = FVector2D::Distance(currentDirection + _CurrentGridPosition, _PacManPointer->_CurrentGridPosition);
-
-        if (GEngine)
-        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, currentDirection.ToString());
-
-       /* if (GEngine)
-            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%f"), currentDistance));*/
-
-        if (currentDistance < shortestDistance)
-        {
-            bestDirection = currentDirection;
-            shortestDistance = currentDistance;
-            if (GEngine)
-                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NOT SHORTEST ");
-          
-        }
-
-    }
-
-    if (GEngine)
-        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,"BEST DIR: " +  bestDirection.ToString());
-    if (GEngine)
-        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "==============================================");
-   
-    return bestDirection;
-}
 
 AC_MoveableCharacter* AC_Ghost::GetPacManPointer()
 {

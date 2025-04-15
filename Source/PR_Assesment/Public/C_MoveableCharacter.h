@@ -40,14 +40,13 @@ public:
 	FVector ConvertGridToWorld(FVector2D gridLocation);
 	void SetMazeGrid(TArray<TArray<bool>>& mazeGrid);
 	bool CheckWalkableGrid(FVector2D gridLocation);
+	void RotateCharacter(FVector2D direction);
 
 	FVector2D _CurrentGridPosition;
 	FVector2D _TargetGridPosition;
 	FVector2D _MovingDirection = FVector2D(1, 0);
 	float _TileSize = 100;
 	float _MoveSpeed = 500;
-	float _MoveInterval = 0.01;
-	FTimerHandle _MoveTimer;
 	FVector2D _PreviousMoveDirection;
 
 	//SAVE DIRECTION VALUE, TEMP  DONT FORGET TO CHANGE TO ENUM LATER

@@ -22,21 +22,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	FVector2D GetTargetTile();
-
-	bool CheckAvailableIntersection(bool isIgnoringDirection, TArray<FVector2D>& availableDirection);
-
-
-	FVector2D GetClosestPathTile(TArray<FVector2D>& availableDirection); //Is Blinky Behaviour
-
-	AC_MoveableCharacter* GetPacManPointer();
-	
 	void UpdateDirection();
 
+	virtual FVector2D GetTargetTile(TArray<FVector2D>& availableDirection);
+	bool CheckAvailableIntersection(bool isIgnoringDirection, TArray<FVector2D>& availableDirection);
+	AC_MoveableCharacter* GetPacManPointer();
+	
+	
 	AC_MoveableCharacter* _PacManPointer;
 
-
-	float _MoveInterval = 0.5f;
-
-	FTimerHandle _MoveTimer;
 };

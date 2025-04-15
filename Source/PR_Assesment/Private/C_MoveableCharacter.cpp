@@ -65,6 +65,7 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 		{
 			_TargetGridPosition = nextGrid;
 			_PreviousMoveDirection = _MovingDirection;
+			RotateCharacter(_MovingDirection);
 		}
 		else
 		{
@@ -141,6 +142,39 @@ void AC_MoveableCharacter::SetMazeGrid(TArray<TArray<bool>>& mazeGrid)
 bool AC_MoveableCharacter::CheckWalkableGrid(FVector2D gridLocation)
 {
 	return _MazeGrid[gridLocation.X][gridLocation.Y];
+}
+
+void AC_MoveableCharacter::RotateCharacter(FVector2D direction)
+{
+	FVector convertedDirection = FVector(direction.X, direction.Y, 0); // Example: face right
+	FRotator lookRotation = convertedDirection.Rotation();
+	SetActorRotation(lookRotation);
+
+
+	//FVector2D(0, -1), // Up is -1 because how Y increases downward
+	//	FVector2D(0, 1),  // Down
+	//	FVector2D(-1, 0), // Left
+	//	FVector2D(1, 0)
+
+	/*if (direction == FVector2D(0, -1))
+	{
+
+	}
+	else if (direction == FVector2D(0, 1))
+	{
+
+	}
+	else if (direction == FVector2D(-1, 0))
+	{
+
+	}
+	else if (direction == FVector2D(1, 0))
+	{
+
+	}*/
+
+
+
 }
 
 FVector2D AC_MoveableCharacter::ConvertWorldToGrid(FVector worldLocation) //Used to Convert World Position to Grid Position, FVector2D to FVector

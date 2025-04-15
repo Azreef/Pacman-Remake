@@ -13,7 +13,7 @@ void AC_Ghost::BeginPlay()
     {
         if (GEngine)
             GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("ERROR: CANNOT FIND PACMAN"));
-    
+
     }
 }
 
@@ -29,21 +29,26 @@ void AC_Ghost::Tick(float DeltaTime)
     }
 }
 
-
 void AC_Ghost::UpdateDirection()
 {
     TArray<FVector2D> availableDirection;
 
+   
     if (CheckAvailableIntersection(true, availableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
     {
+
+       
         if (_MovingDirection != GetTargetTile(availableDirection))
         {
-            MoveTowards(GetTargetTile(availableDirection));      
-        }    
+            MoveTowards(GetTargetTile(availableDirection));
+            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "CHANGE DIRECTION: " + _MovingDirection.ToString());
+            _LatestIntersectionGrid = _CurrentGridPosition;
+        }
+        
+        
     }
 
 }
-
 
 FVector2D AC_Ghost::GetTargetTile(TArray<FVector2D>& availableDirection)
 {
@@ -54,11 +59,16 @@ bool AC_Ghost::CheckAvailableIntersection(bool isIgnoringOppositeDirection, TArr
 {
     availableDirection.Empty();
 
+   
+
     bool isAtIntersection = false;
+
+
 
     for (const FVector2D& currentDirection : _Directions)
     {
 
+        //FIntPoint NewIndex = CurrentIndex + Dir;
         FVector2D nextGrid = _CurrentGridPosition + currentDirection;
 
         if (CheckWalkableGrid(nextGrid))
@@ -66,19 +76,24 @@ bool AC_Ghost::CheckAvailableIntersection(bool isIgnoringOppositeDirection, TArr
             // Ignore reverse direction
             if (currentDirection.Equals(-_MovingDirection, 0.01f) && isIgnoringOppositeDirection)
             {
+                
                 continue;
             }
             else
             {
                 availableDirection.Add(currentDirection);
+               
             }
         }
     }
+   
+
     if (availableDirection.Num() >= 1)
     {
         isAtIntersection = true;
+       
+       
     }
-
     return isAtIntersection;
 }
 

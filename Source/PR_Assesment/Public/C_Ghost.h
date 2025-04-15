@@ -25,10 +25,10 @@ public:
 	void UpdateDirection();
 
 	virtual FVector2D GetTargetTile(TArray<FVector2D>& availableDirection);
-	bool CheckAvailableIntersection(bool isIgnoringDirection, TArray<FVector2D>& availableDirection);
+	bool CheckAvailableIntersection(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection);
 	AC_MoveableCharacter* GetPacManPointer();
 	
-	
+	FVector2D _LatestIntersectionGrid;
 	AC_MoveableCharacter* _PacManPointer;
 
 };

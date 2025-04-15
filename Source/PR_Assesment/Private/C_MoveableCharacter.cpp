@@ -69,7 +69,7 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 		}
 		else
 		{
-			//_TargetGridPosition = _CurrentGridPosition;
+			
 			_MovingDirection = _PreviousMoveDirection;
 		}
 	}
@@ -107,7 +107,7 @@ void AC_MoveableCharacter::MoveRight()
 	_MovingDirection = FVector2D(1, 0);
 }
 
-void AC_MoveableCharacter::MoveTo(FVector2D direction)
+void AC_MoveableCharacter::MoveTowards(FVector2D direction)
 {
 	//_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = direction;

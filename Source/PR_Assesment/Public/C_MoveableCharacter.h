@@ -31,7 +31,7 @@ public:
 	void MoveDown();
 	void MoveLeft();
 	void MoveRight();
-	void MoveTo(FVector2D direction);
+	void MoveTowards(FVector2D direction);
 
 	//void UpdateMovement(float deltaTime);
 	virtual void UpdateMovement(float deltaTime);

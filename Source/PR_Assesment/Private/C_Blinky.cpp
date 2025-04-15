@@ -14,8 +14,8 @@ FVector2D AC_Blinky::GetTargetTile(TArray<FVector2D>& availableDirection)
     {
         float currentDistance = FVector2D::Distance(currentDirection + _CurrentGridPosition, _PacManPointer->_CurrentGridPosition);
 
-        if (GEngine)
-            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, currentDirection.ToString());
+       /* if (GEngine)
+            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, currentDirection.ToString());*/
 
         /* if (GEngine)
              GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%f"), currentDistance));*/
@@ -24,17 +24,17 @@ FVector2D AC_Blinky::GetTargetTile(TArray<FVector2D>& availableDirection)
         {
             bestDirection = currentDirection;
             shortestDistance = currentDistance;
-            if (GEngine)
-                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NOT SHORTEST ");
+            /*if (GEngine)
+                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NOT SHORTEST ");*/
 
         }
 
     }
 
-    if (GEngine)
+   /* if (GEngine)
         GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "BEST DIR: " + bestDirection.ToString());
     if (GEngine)
-        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "==============================================");
+        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "==============================================");*/
 
     return bestDirection;
 }

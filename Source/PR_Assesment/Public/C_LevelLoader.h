@@ -44,7 +44,13 @@ public:
 	TSubclassOf<AActor> _PacMan;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> _Blinky;
+
+	UPROPERTY(EditAnywhere)
 	bool _IsSpawningDots = true;
+
+	UPROPERTY(EditAnywhere)
+	bool _IsSpawningGhost = false;
 
 	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
 };

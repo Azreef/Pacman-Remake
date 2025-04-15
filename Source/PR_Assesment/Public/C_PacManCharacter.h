@@ -25,6 +25,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UInputMappingContext* _MappingContext;
 
-	void Move(const FInputActionValue& Value);
+	void MoveInput(const FInputActionValue& Value);
 
 };

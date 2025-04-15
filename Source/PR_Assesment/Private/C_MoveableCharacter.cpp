@@ -18,6 +18,9 @@ void AC_MoveableCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	_TargetGridPosition = ConvertWorldToGrid(GetActorLocation());
+	_CurrentGridPosition = ConvertWorldToGrid(GetActorLocation());
+	
+	GetWorld()->GetTimerManager().SetTimer(_MoveTimer, this, &AC_MoveableCharacter::UpdateMovement, _MoveInterval, true);
 
 }
 
@@ -25,7 +28,7 @@ void AC_MoveableCharacter::BeginPlay()
 void AC_MoveableCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UpdateMovement(DeltaTime);
+	//UpdateMovement(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -35,52 +38,33 @@ void AC_MoveableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 }
 
-void AC_MoveableCharacter::MoveUp()
-{
-	_PreviousMoveDirection = _MovingDirection;
-	_MovingDirection = FVector2D(0, 1);
-}
+//void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 
-void AC_MoveableCharacter::MoveDown()
-{
-	_PreviousMoveDirection = _MovingDirection;
-	_MovingDirection = FVector2D(0, -1);
-}
-
-void AC_MoveableCharacter::MoveRight()
-{
-	_PreviousMoveDirection = _MovingDirection;
-	_MovingDirection = FVector2D(1, 0);
-}
-
-void AC_MoveableCharacter::MoveLeft()
-{
-	_PreviousMoveDirection = _MovingDirection;
-	_MovingDirection = FVector2D(-1, 0);
-}
-
-
-void AC_MoveableCharacter::UpdateMovement(float deltaTime)
+void AC_MoveableCharacter::UpdateMovement()
 {
 	FVector currentPosition = GetActorLocation();
 	_CurrentGridPosition = ConvertWorldToGrid(currentPosition);
 
+	/*if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%f"), currentDistance));*/
 
+	
 	if (!GetActorLocation().Equals(ConvertGridToWorld(_TargetGridPosition), 1))
 	{
-		
-		FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, _MoveSpeed);
-		
+		FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), FApp::GetDeltaTime(), 300);
 		SetActorLocation(newPosition);
+		//SetActorLocation(ConvertGridToWorld(_TargetGridPosition));
+		//_CurrentGridPosition = _TargetGridPosition;
+		//_CurrentGridPosition = _TargetGridPosition;
 	}
 	
 	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
-
 	if (!_MovingDirection.IsZero())
 	{
 		if (CheckWalkableGrid(nextGrid))
 		{
 			_TargetGridPosition = nextGrid;
+			_PreviousMoveDirection = _MovingDirection;
 		}
 		else
 		{
@@ -88,7 +72,52 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 			_MovingDirection = _PreviousMoveDirection;
 		}
 	}
+
+	if (GEngine)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CURRENT: " + _CurrentGridPosition.ToString());
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "TARGET: " + _TargetGridPosition.ToString());
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "PrevMove: " + _PreviousMoveDirection.ToString());
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CURRENT: " + _MovingDirection.ToString());
+	}
+
+
+
+
 }
+
+
+
+void AC_MoveableCharacter::MoveUp()
+{
+	//_PreviousMoveDirection = _MovingDirection;
+	_MovingDirection = FVector2D(0, -1);
+}
+
+void AC_MoveableCharacter::MoveDown()
+{
+	//_PreviousMoveDirection = _MovingDirection;
+	_MovingDirection = FVector2D(0, 1);
+}
+
+void AC_MoveableCharacter::MoveRight()
+{
+	//_PreviousMoveDirection = _MovingDirection;
+	_MovingDirection = FVector2D(1, 0);
+}
+
+void AC_MoveableCharacter::MoveTo(FVector2D direction)
+{
+	//_PreviousMoveDirection = _MovingDirection;
+	_MovingDirection = direction;
+}
+
+void AC_MoveableCharacter::MoveLeft()
+{
+	//_PreviousMoveDirection = _MovingDirection;
+	_MovingDirection = FVector2D(-1, 0);
+}
+
 
 void AC_MoveableCharacter::SetMazeGrid(TArray<TArray<bool>>& mazeGrid)
 {

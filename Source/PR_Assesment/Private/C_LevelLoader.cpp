@@ -39,6 +39,9 @@ void AC_LevelLoader::GenerateMaze()
 	bool isPacManExist = false;
 	FVector pacManSpawnLocation;
 
+	bool isBlinkyExist = false;
+	FVector blinkySpawnLocation;
+
 	//Initialise _MazeGrid 2D Array
 	_MazeGrid.SetNum(mazeWidth);
 	for (TArray<bool>& currentRow : _MazeGrid)
@@ -74,6 +77,11 @@ void AC_LevelLoader::GenerateMaze()
 				isPacManExist = true;
 				pacManSpawnLocation = spawnLocation;
 			}
+			else if (currentPixel == FColor::Red)//Spawn Blinky
+			{
+				isBlinkyExist = true;
+				blinkySpawnLocation = spawnLocation;
+			}
 
 			_MazeGrid[X][Y] = isWalkable;
 		}
@@ -87,6 +95,17 @@ void AC_LevelLoader::GenerateMaze()
 		AActor* pacMan = GetWorld()->SpawnActor<AActor>(_PacMan, pacManSpawnLocation, FRotator::ZeroRotator);
 
 		Cast<AC_MoveableCharacter>(pacMan)->SetMazeGrid(_MazeGrid); 
+	}
+	  
+	if (isBlinkyExist && _IsSpawningGhost)
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("SPAWN Blinky"));
+
+		AActor* blinky = GetWorld()->SpawnActor<AActor>(_Blinky, blinkySpawnLocation, FRotator::ZeroRotator);
+
+		Cast<AC_MoveableCharacter>(blinky)->SetMazeGrid(_MazeGrid);
+
 	}
 
 	rawImageData->Unlock();

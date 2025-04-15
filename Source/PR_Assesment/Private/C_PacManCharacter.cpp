@@ -22,12 +22,12 @@ void AC_PacManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		EnhancedInputComponent->BindAction(_MoveInputAction, ETriggerEvent::Triggered, this, &AC_PacManCharacter::Move);
+		EnhancedInputComponent->BindAction(_MoveInputAction, ETriggerEvent::Triggered, this, &AC_PacManCharacter::MoveInput);
 	}
 	
 }
 
-void AC_PacManCharacter::Move(const FInputActionValue& movementValue)
+void AC_PacManCharacter::MoveInput(const FInputActionValue& movementValue)
 {
 	
 	FVector2D moveDirection = movementValue.Get<FVector2D>();

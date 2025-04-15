@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
-#include "Misc/App.h"
 #include "C_MoveableCharacter.generated.h"
 
 UCLASS()
@@ -35,7 +34,7 @@ public:
 	void MoveTo(FVector2D direction);
 
 	//void UpdateMovement(float deltaTime);
-	virtual void UpdateMovement();
+	virtual void UpdateMovement(float deltaTime);
 
 	FVector2D ConvertWorldToGrid(FVector worldLocation);
 	FVector ConvertGridToWorld(FVector2D gridLocation);

@@ -20,7 +20,7 @@ void AC_MoveableCharacter::BeginPlay()
 	_TargetGridPosition = ConvertWorldToGrid(GetActorLocation());
 	_CurrentGridPosition = ConvertWorldToGrid(GetActorLocation());
 	
-	GetWorld()->GetTimerManager().SetTimer(_MoveTimer, this, &AC_MoveableCharacter::UpdateMovement, _MoveInterval, true);
+	//GetWorld()->GetTimerManager().SetTimer(_MoveTimer, this, &AC_MoveableCharacter::UpdateMovement, _MoveInterval, true);
 
 }
 
@@ -28,7 +28,7 @@ void AC_MoveableCharacter::BeginPlay()
 void AC_MoveableCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//UpdateMovement(DeltaTime);
+	UpdateMovement(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -40,7 +40,7 @@ void AC_MoveableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 //void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 
-void AC_MoveableCharacter::UpdateMovement()
+void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 {
 	FVector currentPosition = GetActorLocation();
 	_CurrentGridPosition = ConvertWorldToGrid(currentPosition);
@@ -51,7 +51,7 @@ void AC_MoveableCharacter::UpdateMovement()
 	
 	if (!GetActorLocation().Equals(ConvertGridToWorld(_TargetGridPosition), 1))
 	{
-		FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), FApp::GetDeltaTime(), 300);
+		FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, 300);
 		SetActorLocation(newPosition);
 		//SetActorLocation(ConvertGridToWorld(_TargetGridPosition));
 		//_CurrentGridPosition = _TargetGridPosition;

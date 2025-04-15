@@ -52,4 +52,5 @@ void AC_PacManCharacter::Move(const FInputActionValue& movementValue)
 		// Move Down
 		MoveDown();
 	}
+
 }

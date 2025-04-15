@@ -26,4 +26,5 @@ public:
 	UInputMappingContext* _MappingContext;
 
 	void Move(const FInputActionValue& Value);
+
 };

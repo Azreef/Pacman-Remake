@@ -37,23 +37,26 @@ void AC_MoveableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void AC_MoveableCharacter::MoveUp()
 {
+	_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = FVector2D(0, 1);
 }
 
 void AC_MoveableCharacter::MoveDown()
 {
+	_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = FVector2D(0, -1);
 }
 
 void AC_MoveableCharacter::MoveRight()
 {
+	_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = FVector2D(1, 0);
 }
 
 void AC_MoveableCharacter::MoveLeft()
 {
+	_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = FVector2D(-1, 0);
-
 }
 
 
@@ -71,33 +74,20 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 		SetActorLocation(newPosition);
 	}
 	
+	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
+
 	if (!_MovingDirection.IsZero())
 	{
-		FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
-
 		if (CheckWalkableGrid(nextGrid))
 		{
 			_TargetGridPosition = nextGrid;
 		}
 		else
 		{
-			_MovingDirection = FVector2D::ZeroVector;
+			//_TargetGridPosition = _CurrentGridPosition;
+			_MovingDirection = _PreviousMoveDirection;
 		}
-		
 	}
-
-}
-
-FVector2D AC_MoveableCharacter::ConvertWorldToGrid(FVector worldLocation) //Used to Convert World Position to Grid Position, FVector2D to FVector
-{
-	FVector2D gridPosition = FVector2D(FMath::RoundToInt(worldLocation.X / _TileSize), FMath::RoundToInt(worldLocation.Y/ _TileSize));
-	
-	return gridPosition;
-}
-
-FVector AC_MoveableCharacter::ConvertGridToWorld(FVector2D gridLocation) //Used to Convert Grid Position to World Position, FVector to FVector2D
-{
-	return FVector(gridLocation.X * _TileSize, gridLocation.Y * _TileSize, 0);
 }
 
 void AC_MoveableCharacter::SetMazeGrid(TArray<TArray<bool>>& mazeGrid)
@@ -124,3 +114,14 @@ bool AC_MoveableCharacter::CheckWalkableGrid(FVector2D gridLocation)
 	return _MazeGrid[gridLocation.X][gridLocation.Y];
 }
 
+FVector2D AC_MoveableCharacter::ConvertWorldToGrid(FVector worldLocation) //Used to Convert World Position to Grid Position, FVector2D to FVector
+{
+	FVector2D gridPosition = FVector2D(FMath::RoundToInt(worldLocation.X / _TileSize), FMath::RoundToInt(worldLocation.Y / _TileSize));
+
+	return gridPosition;
+}
+
+FVector AC_MoveableCharacter::ConvertGridToWorld(FVector2D gridLocation) //Used to Convert Grid Position to World Position, FVector to FVector2D
+{
+	return FVector(gridLocation.X * _TileSize, gridLocation.Y * _TileSize, 0);
+}

@@ -22,13 +22,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void UpdateDirection();
-
-	virtual FVector2D GetTargetTile(TArray<FVector2D>& availableDirection);
-	bool CheckAvailableIntersection(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection);
-	AC_MoveableCharacter* GetPacManPointer();
+	void UpdateDirection(); //Update Current Moving Direction (Not Position)
+	virtual FVector2D GetTargetTile(TArray<FVector2D>& availableDirection);//Get Next Target Tile (Is Different for Each Ghost Type)
+	bool CheckAvailableIntersection(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection); // Check if there's intersection or corner, also will add all valid direction into 'availableDirection'
+	AC_MoveableCharacter* GetPacManPointer();//Get PacMan Data for targeting purposes
 	
-	FVector2D _LatestIntersectionGrid;
+	FVector2D _LatestIntersectionGrid; // Used to make sure that intersection check (and turning) is only triggered once
 	AC_MoveableCharacter* _PacManPointer;
 
 };

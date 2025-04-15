@@ -27,19 +27,21 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//Moving Functions (Change Direction, Not Position)
 	void MoveUp();
 	void MoveDown();
 	void MoveLeft();
 	void MoveRight();
 	void MoveTowards(FVector2D direction);
 
-	//void UpdateMovement(float deltaTime);
-	virtual void UpdateMovement(float deltaTime);
+	virtual void UpdateMovement(float deltaTime); //Update The Current Position
 
+	// Grid = 1 | World = Grid * TileSize
 	FVector2D ConvertWorldToGrid(FVector worldLocation);
 	FVector ConvertGridToWorld(FVector2D gridLocation);
-	void SetMazeGrid(TArray<TArray<bool>>& mazeGrid);
-	bool CheckWalkableGrid(FVector2D gridLocation);
+
+	void SetMazeGrid(TArray<TArray<bool>>& mazeGrid); //Get MazeGrid (From LevelLoader)
+	bool CheckWalkableGrid(FVector2D gridLocation); //True - Walkable | False - Unwalkable
 	void RotateCharacter(FVector2D direction);
 
 	FVector2D _CurrentGridPosition;

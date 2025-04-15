@@ -17,10 +17,10 @@ void AC_MoveableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//initialise position
 	_TargetGridPosition = ConvertWorldToGrid(GetActorLocation());
 	_CurrentGridPosition = ConvertWorldToGrid(GetActorLocation());
 	
-	//GetWorld()->GetTimerManager().SetTimer(_MoveTimer, this, &AC_MoveableCharacter::UpdateMovement, _MoveInterval, true);
 
 }
 
@@ -38,24 +38,16 @@ void AC_MoveableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 }
 
-//void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 
 void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 {
 	FVector currentPosition = GetActorLocation();
 	_CurrentGridPosition = ConvertWorldToGrid(currentPosition);
 
-	/*if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%f"), currentDistance));*/
-
-	
 	if (!GetActorLocation().Equals(ConvertGridToWorld(_TargetGridPosition), 1))
 	{
 		FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, 300);
 		SetActorLocation(newPosition);
-		//SetActorLocation(ConvertGridToWorld(_TargetGridPosition));
-		//_CurrentGridPosition = _TargetGridPosition;
-		//_CurrentGridPosition = _TargetGridPosition;
 	}
 	
 	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
@@ -74,48 +66,30 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 		}
 	}
 
-	if (GEngine)
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CURRENT: " + _CurrentGridPosition.ToString());
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "TARGET: " + _TargetGridPosition.ToString());
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "PrevMove: " + _PreviousMoveDirection.ToString());
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "CURRENT: " + _MovingDirection.ToString());
-	}
-
-
-
-
 }
-
-
 
 void AC_MoveableCharacter::MoveUp()
 {
-	//_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = FVector2D(0, -1);
 }
 
 void AC_MoveableCharacter::MoveDown()
 {
-	//_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = FVector2D(0, 1);
 }
 
 void AC_MoveableCharacter::MoveRight()
 {
-	//_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = FVector2D(1, 0);
 }
 
 void AC_MoveableCharacter::MoveTowards(FVector2D direction)
 {
-	//_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = direction;
 }
 
 void AC_MoveableCharacter::MoveLeft()
 {
-	//_PreviousMoveDirection = _MovingDirection;
 	_MovingDirection = FVector2D(-1, 0);
 }
 
@@ -146,35 +120,9 @@ bool AC_MoveableCharacter::CheckWalkableGrid(FVector2D gridLocation)
 
 void AC_MoveableCharacter::RotateCharacter(FVector2D direction)
 {
-	FVector convertedDirection = FVector(direction.X, direction.Y, 0); // Example: face right
+	FVector convertedDirection = FVector(direction.X, direction.Y, 0);
 	FRotator lookRotation = convertedDirection.Rotation();
 	SetActorRotation(lookRotation);
-
-
-	//FVector2D(0, -1), // Up is -1 because how Y increases downward
-	//	FVector2D(0, 1),  // Down
-	//	FVector2D(-1, 0), // Left
-	//	FVector2D(1, 0)
-
-	/*if (direction == FVector2D(0, -1))
-	{
-
-	}
-	else if (direction == FVector2D(0, 1))
-	{
-
-	}
-	else if (direction == FVector2D(-1, 0))
-	{
-
-	}
-	else if (direction == FVector2D(1, 0))
-	{
-
-	}*/
-
-
-
 }
 
 FVector2D AC_MoveableCharacter::ConvertWorldToGrid(FVector worldLocation) //Used to Convert World Position to Grid Position, FVector2D to FVector

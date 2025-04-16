@@ -34,7 +34,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	
+	FTimerHandle _GhostTimerHandle;
 
 public:	
 	// Called every frame
@@ -45,7 +45,7 @@ public:
 	void AddToGhostList(AC_Ghost* newGhost);
 
 	TArray<AC_Ghost*> _GhostList;
-	FTimerHandle _GhostTimerHandle;
+	
 
 	int _CurrentPhaseLevel = 0;
 

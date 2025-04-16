@@ -67,6 +67,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint|Character")
 	TSubclassOf<AActor> _Blinky;
 
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint|Character")
+	TSubclassOf<AActor> _Pinky;
+
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint|Character")
+	TSubclassOf<AActor> _Inky;
+
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint|Character")
+	TSubclassOf<AActor> _Clyde;
+
 	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
 
 

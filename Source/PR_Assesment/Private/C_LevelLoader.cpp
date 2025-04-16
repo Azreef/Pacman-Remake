@@ -80,9 +80,21 @@ void AC_LevelLoader::GenerateMaze()
 				isPacManExist = true;
 				pacManSpawnLocation = spawnLocation;
 			}
-			else if (currentPixel == FColor::Red)//Spawn Blinky
+			else if (currentPixel == FColor(255, 0, 0))//Spawn Blinky
 			{
 				ghostToSpawnList.Add({ E_GhostType::Blinky, spawnLocation });
+			}
+			else if (currentPixel == FColor(255, 192, 203))//Spawn Pinky
+			{
+				ghostToSpawnList.Add({ E_GhostType::Pinky, spawnLocation });
+			}
+			else if (currentPixel == FColor(0, 255, 255))//Spawn Inky
+			{
+				ghostToSpawnList.Add({ E_GhostType::Inky, spawnLocation });
+			}
+			else if (currentPixel == FColor(255, 128, 0))//Spawn Clyde
+			{
+				ghostToSpawnList.Add({ E_GhostType::Clyde, spawnLocation });
 			}
 
 			_MazeGrid[X][Y] = isWalkable;
@@ -90,7 +102,7 @@ void AC_LevelLoader::GenerateMaze()
 	}
 
 	//Spawn Characters
-	if (isPacManExist)
+	if (isPacManExist) //Pacman
 	{
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("SPAWN PACMAN"));
@@ -103,36 +115,47 @@ void AC_LevelLoader::GenerateMaze()
 		moveAbleCharacter->SetTileSize(_TileSize);
 	}
 	 
-	for (const F_SpawnGhostData& currentGhostData : ghostToSpawnList)
+	if (_IsSpawningGhost)
 	{
-		TSubclassOf<AActor> spawnedGhostType;
-
-		switch (currentGhostData.ghostSpawnType)
+		for (const F_SpawnGhostData& currentGhostData : ghostToSpawnList) //Ghosts
 		{
+			TSubclassOf<AActor> spawnedGhostType;
+
+			switch (currentGhostData.ghostSpawnType)
+			{
 			case E_GhostType::Blinky:
 				spawnedGhostType = _Blinky;
 				break;
 
 			case E_GhostType::Pinky:
-
+				spawnedGhostType = _Pinky;
 				break;
-		
+
+			case E_GhostType::Inky:
+				spawnedGhostType = _Inky;
+				break;
+
+			case E_GhostType::Clyde:
+				spawnedGhostType = _Clyde;
+				break;
+
+			}
+
+			AActor* spawnedGhostActor = GetWorld()->SpawnActor<AActor>(spawnedGhostType, currentGhostData.ghostSpawnLocation, FRotator::ZeroRotator);
+
+			AC_MoveableCharacter* moveAbleCharacter = Cast<AC_MoveableCharacter>(spawnedGhostActor);
+
+			moveAbleCharacter->SetMazeGrid(_MazeGrid);
+			moveAbleCharacter->SetTileSize(_TileSize);
+
+			ghostManager->AddToGhostList(Cast<AC_Ghost>(spawnedGhostActor));
+
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SPAWN " + UEnum::GetValueAsString(currentGhostData.ghostSpawnType));
+
 		}
-
-		AActor* spawnedGhostActor = GetWorld()->SpawnActor<AActor>(spawnedGhostType, currentGhostData.ghostSpawnLocation, FRotator::ZeroRotator);
-		
-		AC_MoveableCharacter* moveAbleCharacter = Cast<AC_MoveableCharacter>(spawnedGhostActor);
-
-		moveAbleCharacter->SetMazeGrid(_MazeGrid);
-		moveAbleCharacter->SetTileSize(_TileSize);
-		
-		ghostManager->AddToGhostList(Cast<AC_Ghost>(spawnedGhostActor));
-
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SPAWN " + UEnum::GetValueAsString(currentGhostData.ghostSpawnType));
-
 	}
-
+	
 	ghostManager->StartPhase();//Starts Game Timer
 
 	rawImageData->Unlock();

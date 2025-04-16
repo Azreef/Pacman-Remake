@@ -36,7 +36,7 @@ void AC_Ghost::UpdateDirection()
     if (GetPossiblePath(true, availableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
     {
         
-        FVector2D nextDirection;
+        FVector2D nextDirection = FVector2D::ZeroVector;
         
         if (_CurrentState == E_GhostState::Chase)//Chase Mode
         {
@@ -50,19 +50,7 @@ void AC_Ghost::UpdateDirection()
         MoveTowards(nextDirection);
         _LatestIntersectionGrid = _CurrentGridPosition;
 
-        //if(_MovingDirection != GetTargetTile(availableDirection) && _CurrentState == E_GhostState::Chase)
-        //{
-        //    MoveTowards(GetTargetTile(availableDirection));
-        //    
-        //}
-
-        ////Scatter Mode
-        //if (_MovingDirection != GetDirectTileTo(_ScatterGridCoordinate, availableDirection) && _CurrentState == E_GhostState::Scatter)
-        //{
-        //    MoveTowards(GetDirectTileTo(_ScatterGridCoordinate, availableDirection));
    
-        //}
-
     }
     else if (!GetPossiblePath(true, availableDirection))
     {
@@ -146,8 +134,9 @@ AC_MoveableCharacter* AC_Ghost::GetPacManPointer()
 
 void AC_Ghost::SetState(E_GhostState newState)
 {
-
     _CurrentState = newState;
 
+    _MovingDirection = -_MovingDirection; //Also Reverse Moving Direction
+    
 }
 

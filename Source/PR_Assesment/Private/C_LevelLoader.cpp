@@ -39,8 +39,11 @@ void AC_LevelLoader::GenerateMaze()
 	bool isPacManExist = false;
 	FVector pacManSpawnLocation;
 
-	bool isBlinkyExist = false;
-	FVector blinkySpawnLocation;
+
+	TArray <F_SpawnGhostData> ghostToSpawnList;
+
+	AC_GhostManager* ghostManager = Cast<AC_GhostManager>(_GhostManager);
+
 
 	//Initialise _MazeGrid 2D Array
 	_MazeGrid.SetNum(mazeWidth);
@@ -79,14 +82,14 @@ void AC_LevelLoader::GenerateMaze()
 			}
 			else if (currentPixel == FColor::Red)//Spawn Blinky
 			{
-				isBlinkyExist = true;
-				blinkySpawnLocation = spawnLocation;
+				ghostToSpawnList.Add({ E_GhostType::Blinky, spawnLocation });
 			}
 
 			_MazeGrid[X][Y] = isWalkable;
 		}
 	}
 
+	//Spawn Characters
 	if (isPacManExist)
 	{
 		if (GEngine)
@@ -96,8 +99,35 @@ void AC_LevelLoader::GenerateMaze()
 
 		Cast<AC_MoveableCharacter>(pacMan)->SetMazeGrid(_MazeGrid); 
 	}
-	  
-	if (isBlinkyExist && _IsSpawningGhost)
+	 
+	for (const F_SpawnGhostData& currentGhostData : ghostToSpawnList)
+	{
+		TSubclassOf<AActor> spawnedGhostType;
+
+		switch (currentGhostData.ghostSpawnType)
+		{
+			case E_GhostType::Blinky:
+				spawnedGhostType = _Blinky;
+				break;
+
+			case E_GhostType::Pinky:
+
+				break;
+		
+		}
+
+		AActor* spawnedGhostActor = GetWorld()->SpawnActor<AActor>(spawnedGhostType, currentGhostData.ghostSpawnLocation, FRotator::ZeroRotator);
+		Cast<AC_MoveableCharacter>(spawnedGhostActor)->SetMazeGrid(_MazeGrid);
+
+		ghostManager->AddToGhostList(Cast<AC_Ghost>(spawnedGhostActor));
+
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SPAWN " + UEnum::GetValueAsString(currentGhostData.ghostSpawnType));
+
+	}
+
+	ghostManager->StartPhase();
+	/*if (isBlinkyExist && _IsSpawningGhost)
 	{
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("SPAWN Blinky"));
@@ -106,7 +136,7 @@ void AC_LevelLoader::GenerateMaze()
 
 		Cast<AC_MoveableCharacter>(blinky)->SetMazeGrid(_MazeGrid);
 
-	}
+	}*/
 
 	rawImageData->Unlock();
 

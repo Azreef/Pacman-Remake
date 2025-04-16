@@ -46,7 +46,7 @@ public:
 
 	FVector2D _CurrentGridPosition;
 	FVector2D _TargetGridPosition;
-	FVector2D _MovingDirection = FVector2D(1, 0);
+	FVector2D _MovingDirection = FVector2D(0, -1);
 	float _TileSize = 100;
 	float _MoveSpeed = 500;
 	FVector2D _PreviousMoveDirection;
@@ -61,6 +61,5 @@ public:
 	};
 
 	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
-
 
 };

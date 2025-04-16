@@ -17,6 +17,15 @@ enum class E_GhostState : uint8
 };
 
 UENUM()
+enum class E_GhostType : uint8
+{
+	Blinky,
+	Pinky,
+	Inky,
+	Clyde,
+};
+
+UENUM()
 enum class E_ScatterZone : uint8
 {
 	TopLeft,

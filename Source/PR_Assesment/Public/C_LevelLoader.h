@@ -6,7 +6,18 @@
 #include "GameFramework/Actor.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "C_GhostManager.h"
+#include "E_GhostEnum.h"
 #include "C_LevelLoader.generated.h"
+
+USTRUCT()
+struct F_SpawnGhostData
+{
+	GENERATED_BODY();
+
+	E_GhostType ghostSpawnType;
+	FVector ghostSpawnLocation;
+};
 
 UCLASS()
 class PR_ASSESMENT_API AC_LevelLoader : public AActor
@@ -52,5 +63,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool _IsSpawningGhost = false;
 
+	UPROPERTY(EditAnywhere)
+	AActor* _GhostManager;
+
 	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
+
+
 };

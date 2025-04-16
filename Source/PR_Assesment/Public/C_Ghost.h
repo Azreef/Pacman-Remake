@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 #pragma once
 
@@ -19,24 +19,26 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void UpdateDirection(); //Update Current Moving Direction (Not Position)
+	virtual FVector2D GetTargetTile(TArray<FVector2D>& availableDirection);//Get Next Target Tile (Is Different for Each Ghost Type) 
+
+	FVector2D GetDirectTileTo(FVector2D targetCoordinate, TArray<FVector2D>& availableDirection);//Get Next Direct Tile to Get to the Target Coordinate (Find Closest path To the Tile), Usually used for Scatter
+	bool GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection); // Get any available Direction Path & add all valid direction into 'availableDirection' | Return false if found none
+
+	FVector2D _LatestIntersectionGrid; // Used to make sure that intersection check (and turning) is only triggered once
+	AC_MoveableCharacter* _PacManPointer;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void UpdateDirection(); //Update Current Moving Direction (Not Position)
-	virtual FVector2D GetTargetTile(TArray<FVector2D>& availableDirection);//Get Next Target Tile (Is Different for Each Ghost Type)
-	FVector2D GetDirectTileTo(FVector2D targetCoordinate, TArray<FVector2D>& availableDirection);//Get Next Direct Tile to Get to the Target Coordinate (Find Closest path To the Tile)
-	bool GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection); // Get any available Direction Path & add all valid direction into 'availableDirection' | Return false if found none
 	AC_MoveableCharacter* GetPacManPointer();//Get PacMan Data for targeting purposes
-	void SetState(E_GhostState newState);
+	void SetState(E_GhostState newState, bool shouldChangeDirection);
 	
-	FVector2D _LatestIntersectionGrid; // Used to make sure that intersection check (and turning) is only triggered once
-	AC_MoveableCharacter* _PacManPointer;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Character|Ghost")
 	E_GhostState _CurrentState;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Character|Ghost", meta = (ToolTip = "Where The Ghost will Go When in Scatter Mode"))
 	FVector2D _ScatterGridCoordinate;
 
 };

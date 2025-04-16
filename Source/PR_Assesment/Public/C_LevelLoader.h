@@ -32,39 +32,40 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void GenerateMaze();
+	void SpawnCamera(FVector2D cameraPosition, float zoom);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void GenerateMaze();
-	void SpawnCamera(FVector2D cameraPosition, float zoom);
-
-	UPROPERTY(EditAnywhere)
+	
+	UPROPERTY(EditAnywhere, Category = "Maze|Properties", meta = (ToolTip = "Texture used for generating the maze"))
 	UTexture2D* _MazeTexture;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Maze|Properties", meta = (ToolTip = "How big is the tile for each grid"))
 	float _TileSize = 100;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> _Wall;
+	UPROPERTY(EditAnywhere, Category = "Maze|Properties")
+	AActor* _GhostManager;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> _Dots;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> _PacMan;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> _Blinky;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Maze|Debugging")
 	bool _IsSpawningDots = true;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Maze|Debugging")
 	bool _IsSpawningGhost = false;
 
-	UPROPERTY(EditAnywhere)
-	AActor* _GhostManager;
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint")
+	TSubclassOf<AActor> _Wall;
+
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint")
+	TSubclassOf<AActor> _Dots;
+
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint|Character")
+	TSubclassOf<AActor> _PacMan;
+
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint|Character")
+	TSubclassOf<AActor> _Blinky;
 
 	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
 

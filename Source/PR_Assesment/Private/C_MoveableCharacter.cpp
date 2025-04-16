@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 
 #include "C_MoveableCharacter.h"
@@ -93,6 +93,11 @@ void AC_MoveableCharacter::MoveLeft()
 	_MovingDirection = FVector2D(-1, 0);
 }
 
+
+void AC_MoveableCharacter::SetTileSize(float tileSize)
+{
+	_TileSize = tileSize;
+}
 
 void AC_MoveableCharacter::SetMazeGrid(TArray<TArray<bool>>& mazeGrid)
 {

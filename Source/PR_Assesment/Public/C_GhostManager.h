@@ -34,6 +34,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -42,20 +44,17 @@ public:
 	void UpdateAllGhostState(E_GhostState);
 	void AddToGhostList(AC_Ghost* newGhost);
 
-	E_GhostState _CurrentGlobalGhostState = E_GhostState::Chase;
-
 	TArray<AC_Ghost*> _GhostList;
-
-	
-
 	FTimerHandle _GhostTimerHandle;
 
 	int _CurrentPhaseLevel = 0;
 
 	bool _IsTimerInitialized = false;
 
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Properties", meta = (ToolTip = "How long does each mode last each phase (in seconds)"))
 	TArray<F_PhaseDuration> _PhaseDurationList = { { 7, 20 }, { 7,20 }, { 5,20 }, { 5,-1 } } ; //-1 is infinite
+
+	UPROPERTY(EditAnywhere, Category = "Properties")
+	E_GhostState _CurrentGlobalGhostState = E_GhostState::Chase;
 
 };

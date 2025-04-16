@@ -97,7 +97,10 @@ void AC_LevelLoader::GenerateMaze()
 
 		AActor* pacMan = GetWorld()->SpawnActor<AActor>(_PacMan, pacManSpawnLocation, FRotator::ZeroRotator);
 
-		Cast<AC_MoveableCharacter>(pacMan)->SetMazeGrid(_MazeGrid); 
+		AC_MoveableCharacter* moveAbleCharacter = Cast<AC_MoveableCharacter>(pacMan);
+
+		moveAbleCharacter->SetMazeGrid(_MazeGrid);
+		moveAbleCharacter->SetTileSize(_TileSize);
 	}
 	 
 	for (const F_SpawnGhostData& currentGhostData : ghostToSpawnList)
@@ -117,8 +120,12 @@ void AC_LevelLoader::GenerateMaze()
 		}
 
 		AActor* spawnedGhostActor = GetWorld()->SpawnActor<AActor>(spawnedGhostType, currentGhostData.ghostSpawnLocation, FRotator::ZeroRotator);
-		Cast<AC_MoveableCharacter>(spawnedGhostActor)->SetMazeGrid(_MazeGrid);
+		
+		AC_MoveableCharacter* moveAbleCharacter = Cast<AC_MoveableCharacter>(spawnedGhostActor);
 
+		moveAbleCharacter->SetMazeGrid(_MazeGrid);
+		moveAbleCharacter->SetTileSize(_TileSize);
+		
 		ghostManager->AddToGhostList(Cast<AC_Ghost>(spawnedGhostActor));
 
 		if (GEngine)
@@ -126,17 +133,7 @@ void AC_LevelLoader::GenerateMaze()
 
 	}
 
-	ghostManager->StartPhase();
-	/*if (isBlinkyExist && _IsSpawningGhost)
-	{
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("SPAWN Blinky"));
-
-		AActor* blinky = GetWorld()->SpawnActor<AActor>(_Blinky, blinkySpawnLocation, FRotator::ZeroRotator);
-
-		Cast<AC_MoveableCharacter>(blinky)->SetMazeGrid(_MazeGrid);
-
-	}*/
+	ghostManager->StartPhase();//Starts Game Timer
 
 	rawImageData->Unlock();
 
@@ -155,7 +152,6 @@ void AC_LevelLoader::SpawnCamera(FVector2D cameraPosition, float zoom)
 	APlayerController* playerController = UGameplayStatics::GetPlayerController(this, 0);
 	
 	playerController->SetViewTargetWithBlend(mainCamera);
-
 
 }
 

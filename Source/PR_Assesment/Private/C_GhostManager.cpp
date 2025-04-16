@@ -53,14 +53,14 @@ void AC_GhostManager::StartPhase()
 		_CurrentPhaseLevel++;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::SanitizeFloat(timeToSet));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::SanitizeFloat(timeToSet));
 
 	GetWorldTimerManager().SetTimer(_GhostTimerHandle, this, &AC_GhostManager::StartPhase, timeToSet, true);
 
 	if (GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "CHANGING MODE TO " + UEnum::GetValueAsString(_CurrentGlobalGhostState));
 
-	_IsTimerInitialized = true;
+	_IsTimerInitialized = true;		
 
 }
 
@@ -68,7 +68,7 @@ void AC_GhostManager::UpdateAllGhostState(E_GhostState)
 {
 	for (AC_Ghost* currentGhost : _GhostList)
 	{
-		currentGhost->SetState(_CurrentGlobalGhostState);
+		currentGhost->SetState(_CurrentGlobalGhostState,true);
 	}
 
 }
@@ -76,7 +76,7 @@ void AC_GhostManager::UpdateAllGhostState(E_GhostState)
 void AC_GhostManager::AddToGhostList(AC_Ghost* newGhost)
 {
 	if (newGhost)
-	{
+	{		
 		if (!_GhostList.Contains(newGhost))
 		{
 			_GhostList.Add(newGhost);

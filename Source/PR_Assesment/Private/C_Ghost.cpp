@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 
 #include "C_Ghost.h"
@@ -132,11 +132,15 @@ AC_MoveableCharacter* AC_Ghost::GetPacManPointer()
 
 }
 
-void AC_Ghost::SetState(E_GhostState newState)
+void AC_Ghost::SetState(E_GhostState newState, bool shouldChangeDirection)
 {
     _CurrentState = newState;
 
-    _MovingDirection = -_MovingDirection; //Also Reverse Moving Direction
+    if (shouldChangeDirection)//Also Reverse Moving Direction
+    {
+        _MovingDirection = -_MovingDirection; 
+    }
+    
     
 }
 

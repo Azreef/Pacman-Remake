@@ -33,19 +33,41 @@ void AC_Ghost::UpdateDirection()
 {
     TArray<FVector2D> availableDirection;
 
-   
-    if (CheckAvailableIntersection(true, availableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
+    if (GetPossiblePath(true, availableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
     {
-
-       
-        if (_MovingDirection != GetTargetTile(availableDirection))
+        
+        FVector2D nextDirection;
+        
+        if (_CurrentState == E_GhostState::Chase)//Chase Mode
         {
-            MoveTowards(GetTargetTile(availableDirection));
-            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "CHANGE DIRECTION: " + _MovingDirection.ToString());
-            _LatestIntersectionGrid = _CurrentGridPosition;
+            nextDirection = GetTargetTile(availableDirection);
         }
-        
-        
+        else if (_CurrentState == E_GhostState::Scatter)//Scatter Mode
+        {
+            nextDirection = GetDirectTileTo(_ScatterGridCoordinate, availableDirection);
+        }
+
+        MoveTowards(nextDirection);
+        _LatestIntersectionGrid = _CurrentGridPosition;
+
+        //if(_MovingDirection != GetTargetTile(availableDirection) && _CurrentState == E_GhostState::Chase)
+        //{
+        //    MoveTowards(GetTargetTile(availableDirection));
+        //    
+        //}
+
+        ////Scatter Mode
+        //if (_MovingDirection != GetDirectTileTo(_ScatterGridCoordinate, availableDirection) && _CurrentState == E_GhostState::Scatter)
+        //{
+        //    MoveTowards(GetDirectTileTo(_ScatterGridCoordinate, availableDirection));
+   
+        //}
+
+    }
+    else if (!GetPossiblePath(true, availableDirection))
+    {
+        if (GEngine)
+            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "No Path Found!");
     }
 
 }
@@ -55,15 +77,33 @@ FVector2D AC_Ghost::GetTargetTile(TArray<FVector2D>& availableDirection)
     return FVector2D();
 }
 
-bool AC_Ghost::CheckAvailableIntersection(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection)
+FVector2D AC_Ghost::GetDirectTileTo(FVector2D targetCoordinate, TArray<FVector2D>& availableDirection)
+{
+    float shortestDistance = 100;
+    FVector2D bestDirection = _MovingDirection;
+
+
+    for (FVector2D& currentDirection : availableDirection)
+    {
+        float currentDistance = FVector2D::Distance(currentDirection + _CurrentGridPosition, targetCoordinate);
+
+
+        if (currentDistance < shortestDistance)
+        {
+            bestDirection = currentDirection;
+            shortestDistance = currentDistance;
+        }
+
+    }
+
+    return bestDirection;
+}
+
+bool AC_Ghost::GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection)
 {
     availableDirection.Empty();
 
-   
-
-    bool isAtIntersection = false;
-
-
+    bool isPossiblePathExist = false;
 
     for (const FVector2D& currentDirection : _Directions)
     {
@@ -90,11 +130,10 @@ bool AC_Ghost::CheckAvailableIntersection(bool isIgnoringOppositeDirection, TArr
 
     if (availableDirection.Num() >= 1)
     {
-        isAtIntersection = true;
-       
-       
+        isPossiblePathExist = true;
+   
     }
-    return isAtIntersection;
+    return isPossiblePathExist;
 }
 
 
@@ -102,6 +141,13 @@ AC_MoveableCharacter* AC_Ghost::GetPacManPointer()
 {
     AActor* foundActor = UGameplayStatics::GetActorOfClass(GetWorld(), AC_PacManCharacter::StaticClass());
     return Cast<AC_MoveableCharacter>(foundActor);
+
+}
+
+void AC_Ghost::SetState(E_GhostState newState)
+{
+
+    _CurrentState = newState;
 
 }
 

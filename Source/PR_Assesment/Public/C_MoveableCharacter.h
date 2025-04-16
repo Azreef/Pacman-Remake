@@ -52,11 +52,12 @@ public:
 	FVector2D _PreviousMoveDirection;
 
 	//SAVE DIRECTION VALUE, TEMP  DONT FORGET TO CHANGE TO ENUM LATER
+	//BASED ON PRIORITY up > left > down.
 	const TArray<FVector2D> _Directions = {
-	   FVector2D(0, -1), // Up is -1 because how Y increases downward
-	   FVector2D(0, 1),  // Down
-	   FVector2D(-1, 0), // Left
-	   FVector2D(1, 0)   // Right
+		FVector2D(0, -1), // Up is -1 because how Y increases downward
+		FVector2D(-1, 0), // Left 
+		FVector2D(0, 1),  // Down
+		FVector2D(1, 0),  // Right
 	};
 
 	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]

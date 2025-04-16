@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "E_GhostStateEnum.h"
+#include "E_GhostEnum.h"
+#include "C_Ghost.h"
 #include "C_GhostManager.generated.h"
 
 UCLASS()
@@ -24,6 +25,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	E_GhostStateEnum _CurrentGhostState;
+
+	void UpdateAllGhostState(E_GhostState);
+	void AddToGhostList(AC_Ghost* newGhost);
+
+	E_GhostState _CurrentGhostState;
+
+	TArray<AC_Ghost*> _GhostList;
 
 };

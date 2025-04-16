@@ -3,15 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "E_GhostStateEnum.generated.h"
+#include "E_GhostEnum.generated.h"
 
 /**
  * 
  */
 
 UENUM()
-enum class E_GhostStateEnum : uint8
+enum class E_GhostState : uint8
 {
 	Chase,
 	Scatter,
+};
+
+UENUM()
+enum class E_ScatterZone : uint8
+{
+	TopLeft,
+	TopRight,
+	BottomLeft,
+	BottomRight,
 };

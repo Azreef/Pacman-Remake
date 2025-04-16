@@ -25,3 +25,26 @@ void AC_GhostManager::Tick(float DeltaTime)
 
 }
 
+void AC_GhostManager::UpdateAllGhostState(E_GhostState)
+{
+	for (AC_Ghost* currentGhost : _GhostList)
+	{
+		currentGhost->SetState(_CurrentGhostState);
+	}
+
+}
+
+void AC_GhostManager::AddToGhostList(AC_Ghost* newGhost)
+{
+	
+	if (!_GhostList.Contains(newGhost))
+	{
+		_GhostList.Add(newGhost);
+	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Ghost Already Exit is GhostList!");
+	}
+}
+

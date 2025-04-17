@@ -3,19 +3,21 @@
 
 #include "C_GhostManager.h"
 #include "C_Ghost.h"
+#include "C_GameManager.h"
 
 // Sets default values
 AC_GhostManager::AC_GhostManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void AC_GhostManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetGameManager();
 
 }
 
@@ -26,7 +28,7 @@ void AC_GhostManager::Tick(float DeltaTime)
 
 	if (_GhostTimerHandle.IsValid() && GetWorldTimerManager().TimerExists(_GhostTimerHandle) && GetWorldTimerManager().IsTimerActive(_GhostTimerHandle) && _IsTimerInitialized)
 	{
-		if (GEngine)
+		if (GEngine && _GameManager->_IsDebugModeEnabled)
 		{
 			FString timeDebugString = UEnum::GetValueAsString(_CurrentGlobalGhostState)+ ": " + FString::SanitizeFloat(GetWorldTimerManager().GetTimerRemaining(_GhostTimerHandle));
 			GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, timeDebugString);
@@ -35,12 +37,19 @@ void AC_GhostManager::Tick(float DeltaTime)
 
 	if (CheckIfAnyGhostInHouse())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, FString("Ghost Release Timer: ") + FString::SanitizeFloat(_CurrentGhostHouseTime));
+		if (GEngine && _GameManager->_IsDebugModeEnabled)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, FString("Ghost Release Timer: ") + FString::SanitizeFloat(_MaxGhostHouseTime - _CurrentGhostHouseTime));
+		}
+		
 
 		if (_CurrentGhostHouseTime >= _MaxGhostHouseTime)
 		{
 			ReleaseGhost();
-			GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, "RELEASING GHOST");
+			if (GEngine && _GameManager->_IsDebugModeEnabled)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, "RELEASING GHOST");
+			}
 		}
 		else
 		{
@@ -51,7 +60,6 @@ void AC_GhostManager::Tick(float DeltaTime)
 	{
 		_CurrentGhostHouseTime = 0;
 	}
-
 }
 
 void AC_GhostManager::StartPhase()
@@ -76,10 +84,15 @@ void AC_GhostManager::StartPhase()
 
 	GetWorldTimerManager().SetTimer(_GhostTimerHandle, this, &AC_GhostManager::StartPhase, timeToSet, true);
 
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "CHANGING MODE TO " + UEnum::GetValueAsString(_CurrentGlobalGhostState));
-
-	_IsTimerInitialized = true;		
+	if (_GameManager)
+	{
+		if (GEngine && (*_GameManager)._IsDebugModeEnabled)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "CHANGING MODE TO " + UEnum::GetValueAsString(_CurrentGlobalGhostState));
+		}
+		_IsTimerInitialized = true;
+	}
+	
 
 }
 
@@ -114,7 +127,7 @@ void AC_GhostManager::AddToGhostList(AC_Ghost* newGhost)
 		else
 		{
 			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "GHOST MANAGER: Ghost Already Exist is GhostList!");
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "GHOST MANAGER: Ghost Already Exist in GhostList!");
 		}
 	}
 	else
@@ -140,36 +153,49 @@ bool AC_GhostManager::CheckIfAnyGhostInHouse()
 	return IsGhostInsideHouse;
 }
 
-void AC_GhostManager::ReleaseGhost()
+AC_Ghost* AC_GhostManager::GetGhostByType(E_GhostType ghostType)
 {
-	//Release based on priority (Pinky -> Inky -> Clyde)
 	for (AC_Ghost* currentGhost : _GhostList)
 	{
-		if ((*currentGhost)._CurrentState == E_GhostState::AtHome)
+		if (currentGhost->_GhostType == ghostType)
 		{
-			if ((*currentGhost)._GhostType == E_GhostType::Blinky)
-			{
-				(*currentGhost).SetState(E_GhostState::ExitingHome, false);
-				break;
-			}
-			else if ((*currentGhost)._GhostType == E_GhostType::Pinky)
-			{
-				(*currentGhost).SetState(E_GhostState::ExitingHome, false);
-				break;
-			}
-			else if ((*currentGhost)._GhostType == E_GhostType::Inky)
-			{
-				(*currentGhost).SetState(E_GhostState::ExitingHome, false);
-				break;
-			}
-			else if ((*currentGhost)._GhostType == E_GhostType::Clyde)
-			{
-				(*currentGhost).SetState(E_GhostState::ExitingHome, false);
-				break;
-			}
+			
+			return currentGhost;
 		}
 	}
 
+	return nullptr;
+}
+
+void AC_GhostManager::ReleaseGhost()
+{
+	AC_Ghost* currentGhostToRelease = nullptr;
+
+	if (_GhostLeavesCounter == 1)
+	{
+		currentGhostToRelease = GetGhostByType(E_GhostType::Pinky);
+	}
+	else if (_GhostLeavesCounter == 2)
+	{
+		currentGhostToRelease = GetGhostByType(E_GhostType::Inky);
+	}
+	else if (_GhostLeavesCounter == 3)
+	{
+		currentGhostToRelease = GetGhostByType(E_GhostType::Clyde);
+	}
+
+	if (currentGhostToRelease)
+	{
+		(*currentGhostToRelease).SetState(E_GhostState::ExitingHome, false);
+	}
+
+	_GhostLeavesCounter++;
+	
 	_CurrentGhostHouseTime = 0;
+}
+
+void AC_GhostManager::SetGameManager()
+{
+	_GameManager = Cast<AC_GameManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AC_GameManager::StaticClass()));
 }
 

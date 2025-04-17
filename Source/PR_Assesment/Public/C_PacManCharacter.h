@@ -18,13 +18,18 @@ class PR_ASSESMENT_API AC_PacManCharacter : public AC_MoveableCharacter
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	
+
 public:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* _MoveInputAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* _ToggleDebugInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* _MappingContext;
 
 	void MoveInput(const FInputActionValue& Value);
-
+	void ToggleDebug(const FInputActionValue& movementValue);
 };

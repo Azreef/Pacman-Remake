@@ -4,6 +4,7 @@
 #include "C_Ghost.h"
 #include "C_PacManCharacter.h"
 #include "C_GhostManager.h"
+#include "C_GameManager.h"
 
 void AC_Ghost::BeginPlay()
 {
@@ -24,11 +25,11 @@ void AC_Ghost::Tick(float DeltaTime)
 
     if (_PacManPointer)
     {
-        if (_IsDebugModeEnabled)
+        if (_GameManager->_IsDebugModeEnabled &&  _IsThisGhostDebugEnabled)
         {
             DrawDebug(_CurrentTargetGridPosition, _DebugColor);
 
-            //DEBUG HERE
+            //ADD MORE DEBUG HERE
         }
         
           
@@ -156,7 +157,6 @@ bool AC_Ghost::CalculatePossiblePath(bool isIgnoringOppositeDirection, TArray<FV
         }
     }
    
-
     if (availableDirection.Num() >= 1)
     {
         isPossiblePathExist = true;

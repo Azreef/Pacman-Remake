@@ -10,8 +10,8 @@ void AC_Inky::Tick(float DeltaTime)
     if (!_BlinkyPointer && _CurrentBlinkySearchTime < _BlinkySearchTimeoutTime)
     {
         _CurrentBlinkySearchTime += DeltaTime;
-        if (GEngine)
-            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, "INKY: FINDING BLINKY");
+
+      
         GetBlinkyPointer();
     }
     else if (_CurrentBlinkySearchTime >= _BlinkySearchTimeoutTime)
@@ -35,7 +35,6 @@ FVector2D AC_Inky::CalculateChaseTargetGrid()
 
         inkyTarget = inkyTarget - _BlinkyPointer->_CurrentGridPosition ; //Get Vector from Previous target to Blinky
 
-        //inkyTarget = _BlinkyPointer->_CurrentGridPosition + (inkyTarget * 2); //Double Previous Vector
         inkyTarget = _BlinkyPointer->_CurrentGridPosition + (inkyTarget * 2); //Double Previous Vector
 
         return inkyTarget;
@@ -53,11 +52,5 @@ void AC_Inky::GetBlinkyPointer()
     AActor* foundActor = UGameplayStatics::GetActorOfClass(GetWorld(), AC_Blinky::StaticClass());
     _BlinkyPointer = Cast<AC_Blinky>(foundActor);
 
-    if(_BlinkyPointer)
-    {
-
-        if (GEngine)
-            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, "INKY: FOUND BLINKY");
-    }
    
 }

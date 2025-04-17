@@ -43,7 +43,9 @@ public:
 	void UpdateAllGhostState(E_GhostState newGhostState, bool isIncludingGhostAtHome);
 	void AddToGhostList(class AC_Ghost* newGhost);
 	bool CheckIfAnyGhostInHouse();
+	class AC_Ghost* GetGhostByType(E_GhostType ghostType);
 	void ReleaseGhost(); //Release Ghost From their house
+	void SetGameManager();
 
 	TArray<AC_Ghost*> _GhostList;
 
@@ -53,6 +55,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Properties", meta = (ToolTip = "How long the ghost will stay at house (in seconds)"))
 	float _MaxGhostHouseTime = 5;
 
+	int _GhostLeavesCounter = 1;
+
 	bool _IsTimerInitialized = false;
 
 	UPROPERTY(EditAnywhere, Category = "Properties", meta = (ToolTip = "How long does each mode last each phase (in seconds)"))
@@ -61,4 +65,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Properties")
 	E_GhostState _CurrentGlobalGhostState = E_GhostState::Chase;
 
+	class AC_GameManager* _GameManager;
 };
+
+

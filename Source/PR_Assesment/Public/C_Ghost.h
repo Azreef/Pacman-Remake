@@ -42,6 +42,9 @@ public:
 	bool CheckWalkableGrid(FVector2D gridLocation);
 	
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost")
+	E_GhostType _GhostType;
+
+	UPROPERTY(EditAnywhere, Category = "Character|Ghost")
 	E_GhostState _CurrentState;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost", meta = (ToolTip = "Where The Ghost will Go When in Scatter Mode"))
@@ -51,7 +54,7 @@ public:
 	FVector2D _HouseExitGridCoordinate = FVector2D(12,11);
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug")
-	bool _IsDebugModeEnabled = true;
+	bool _IsThisGhostDebugEnabled = true;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug")
 	FColor _DebugColor = FColor::White;
@@ -64,9 +67,6 @@ public:
 
 	float _CurrentTurnWaitTime = 0;
 	
-	E_GhostType _GhostType;
-
 	AC_GhostManager* _GhostManager;
-	
 
 };

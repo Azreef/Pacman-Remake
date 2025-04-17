@@ -2,6 +2,7 @@
 
 
 #include "C_PacManCharacter.h"
+#include "C_GameManager.h"
 
 
 void AC_PacManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -23,8 +24,14 @@ void AC_PacManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(_MoveInputAction, ETriggerEvent::Triggered, this, &AC_PacManCharacter::MoveInput);
+		EnhancedInputComponent->BindAction(_ToggleDebugInputAction, ETriggerEvent::Triggered, this, &AC_PacManCharacter::ToggleDebug);
 	}
 	
+}
+
+void AC_PacManCharacter::ToggleDebug(const FInputActionValue& movementValue)
+{
+	_GameManager->_IsDebugModeEnabled = !_GameManager->_IsDebugModeEnabled;
 }
 
 void AC_PacManCharacter::MoveInput(const FInputActionValue& movementValue)

@@ -115,9 +115,7 @@ void AC_LevelLoader::GenerateMaze()
 	//Spawn Characters
 	if (isPacManExist) //Pacman
 	{
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("SPAWN PACMAN"));
-
+		
 		AActor* pacMan = GetWorld()->SpawnActor<AActor>(_PacMan, pacManSpawnLocation, FRotator::ZeroRotator);
 
 		AC_MoveableCharacter* moveAbleCharacter = Cast<AC_MoveableCharacter>(pacMan);
@@ -164,9 +162,6 @@ void AC_LevelLoader::GenerateMaze()
 			spawnedGhost->SetGhostManager(ghostManager);
 			//spawnedGhost->_CurrentState = ghostManager->_CurrentGlobalGhostState;
 			ghostManager->AddToGhostList(spawnedGhost);
-
-			if (GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SPAWN " + UEnum::GetValueAsString(currentGhostData.ghostSpawnType));
 
 		}
 	}

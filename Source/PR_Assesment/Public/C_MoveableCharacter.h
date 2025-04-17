@@ -43,14 +43,14 @@ public:
 
 	void SetTileSize(float tileSize); //Set The Tile Size for Movement Purposes
 	void SetMazeGrid(TArray <TArray<F_GridData>>* mazeGrid); //Get MazeGrid (From LevelLoader)
+	void SetGameManager();
 	virtual bool CheckWalkableGrid(FVector2D gridLocation);
 	void RotateCharacter(FVector2D direction);
-
 	FVector2D _CurrentGridPosition;
 	FVector2D _TargetGridPosition;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Debugging", meta = (ToolTip = "Current Moving Direction"))
-	FVector2D _MovingDirection = FVector2D(0, -1);
+	FVector2D _MovingDirection = FVector2D::ZeroVector;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Debugging", meta = (ToolTip = "Previous Moving Direction"))
 	FVector2D _PreviousMoveDirection;
@@ -71,4 +71,5 @@ public:
 
 	TArray <TArray<F_GridData>>* _MazeGrid;
 
+	class AC_GameManager* _GameManager;
 };

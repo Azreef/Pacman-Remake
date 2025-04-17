@@ -2,7 +2,7 @@
 
 
 #include "C_MoveableCharacter.h"
-
+#include "C_GameManager.h"
 
 // Sets default values
 AC_MoveableCharacter::AC_MoveableCharacter()
@@ -16,6 +16,8 @@ AC_MoveableCharacter::AC_MoveableCharacter()
 void AC_MoveableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetGameManager();//set game manager
 
 	//initialise position
 	_TargetGridPosition = ConvertWorldToGrid(GetActorLocation());
@@ -126,6 +128,11 @@ void AC_MoveableCharacter::SetMazeGrid(TArray <TArray<F_GridData>>* mazeGrid)
 	}
 	
 
+}
+
+void AC_MoveableCharacter::SetGameManager()
+{
+	_GameManager = Cast<AC_GameManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AC_GameManager::StaticClass()));
 }
 
 bool AC_MoveableCharacter::CheckWalkableGrid(FVector2D gridLocation)

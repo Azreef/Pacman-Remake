@@ -47,7 +47,7 @@ void AC_LevelLoader::GenerateMaze()
 
 	//Initialise _MazeGrid 2D Array
 	_MazeGrid.SetNum(mazeWidth);
-	for (TArray<bool>& currentRow : _MazeGrid)
+	for (TArray<F_GridData>& currentRow : _MazeGrid)
 	{
 		currentRow.SetNum(mazeHeight);
 	}
@@ -62,13 +62,21 @@ void AC_LevelLoader::GenerateMaze()
 			FVector spawnLocation = GetActorLocation() + FVector(X * _TileSize, Y * _TileSize, 0);
 
 			bool isWalkable = true;
+			E_TileType tileType = E_TileType::Empty;
 
 			if (currentPixel == FColor::Black )//Spawn Wall
 			{
 				GetWorld()->SpawnActor<AActor>(_Wall, spawnLocation, FRotator::ZeroRotator);
 
 				isWalkable = false;
-				
+				tileType = E_TileType::Wall;
+			}
+			else if (currentPixel == FColor::Green)//Spawn Door
+			{
+				GetWorld()->SpawnActor<AActor>(_Door, spawnLocation, FRotator::ZeroRotator);
+
+				isWalkable = false;
+				tileType = E_TileType::Door;
 			}
 			else if(currentPixel == FColor::Yellow && _IsSpawningDots)//Spawn Dots
 			{
@@ -97,7 +105,8 @@ void AC_LevelLoader::GenerateMaze()
 				ghostToSpawnList.Add({ E_GhostType::Clyde, spawnLocation });
 			}
 
-			_MazeGrid[X][Y] = isWalkable;
+			_MazeGrid[X][Y].isWalkable = isWalkable;
+			_MazeGrid[X][Y].tileType = tileType;
 		}
 	}
 
@@ -111,7 +120,7 @@ void AC_LevelLoader::GenerateMaze()
 
 		AC_MoveableCharacter* moveAbleCharacter = Cast<AC_MoveableCharacter>(pacMan);
 
-		moveAbleCharacter->SetMazeGrid(_MazeGrid);
+		moveAbleCharacter->SetMazeGrid(&_MazeGrid);
 		moveAbleCharacter->SetTileSize(_TileSize);
 	}
 	 
@@ -145,7 +154,7 @@ void AC_LevelLoader::GenerateMaze()
 
 			AC_MoveableCharacter* moveAbleCharacter = Cast<AC_MoveableCharacter>(spawnedGhostActor);
 
-			moveAbleCharacter->SetMazeGrid(_MazeGrid);
+			moveAbleCharacter->SetMazeGrid(&_MazeGrid);
 			moveAbleCharacter->SetTileSize(_TileSize);
 
 			ghostManager->AddToGhostList(Cast<AC_Ghost>(spawnedGhostActor));

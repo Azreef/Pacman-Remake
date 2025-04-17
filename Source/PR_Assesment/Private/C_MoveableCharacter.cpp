@@ -100,20 +100,20 @@ void AC_MoveableCharacter::SetTileSize(float tileSize)
 	_TileSize = tileSize;
 }
 
-void AC_MoveableCharacter::SetMazeGrid(TArray<TArray<bool>>& mazeGrid)
+void AC_MoveableCharacter::SetMazeGrid(TArray <TArray<F_GridData>>* mazeGrid)
 {
-	if (!mazeGrid.IsEmpty())
+	if (!mazeGrid->IsEmpty())
 	{
 		_MazeGrid = mazeGrid;
 
 		//DEBUG
-		for (int32 Y = 0; Y < _MazeGrid.Num(); Y++)
+		for (int32 Y = 0; Y < _MazeGrid->Num(); Y++)
 		{
 			FString RowString;
 
-			for (int32 X = 0; X < _MazeGrid[Y].Num(); X++)
+			for (int32 X = 0; X < (*_MazeGrid)[Y].Num(); X++)
 			{
-				RowString += _MazeGrid[Y][X] ? TEXT("1 ") : TEXT("0 ");
+				RowString += (*_MazeGrid)[Y][X].isWalkable ? TEXT("1 ") : TEXT("0 ");
 			}
 
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *RowString);
@@ -131,9 +131,12 @@ void AC_MoveableCharacter::SetMazeGrid(TArray<TArray<bool>>& mazeGrid)
 bool AC_MoveableCharacter::CheckWalkableGrid(FVector2D gridLocation)
 {
 
-	if (!_MazeGrid.IsEmpty())
+	if (!_MazeGrid->IsEmpty())
 	{
-		return _MazeGrid[gridLocation.X][gridLocation.Y];
+		int indexX = gridLocation.X;
+		int indexY = gridLocation.Y;
+
+		return (*_MazeGrid)[indexX][indexY].isWalkable;
 	}
 	else
 	{
@@ -142,7 +145,7 @@ bool AC_MoveableCharacter::CheckWalkableGrid(FVector2D gridLocation)
 
 		return false;
 	}
-	
+
 }
 
 void AC_MoveableCharacter::RotateCharacter(FVector2D direction)

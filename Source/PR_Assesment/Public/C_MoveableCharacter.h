@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
+#include "F_MazeStruct.h"
 #include "C_MoveableCharacter.generated.h"
 
 UCLASS()
@@ -41,8 +42,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetTileSize(float tileSize); //Set The Tile Size for Movement Purposes
-	void SetMazeGrid(TArray<TArray<bool>>& mazeGrid); //Get MazeGrid (From LevelLoader)
-	bool CheckWalkableGrid(FVector2D gridLocation); //True - Walkable | False - Unwalkable
+	void SetMazeGrid(TArray <TArray<F_GridData>>* mazeGrid); //Get MazeGrid (From LevelLoader)
+	bool CheckWalkableGrid(FVector2D gridLocation);
 	void RotateCharacter(FVector2D direction);
 
 	FVector2D _CurrentGridPosition;
@@ -64,6 +65,6 @@ public:
 		FVector2D(1, 0),  // Right
 	};
 
-	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
+	TArray <TArray<F_GridData>>* _MazeGrid;
 
 };

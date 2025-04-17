@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "C_GhostManager.h"
 #include "E_GhostEnum.h"
+#include "F_MazeStruct.h"
 #include "C_LevelLoader.generated.h"
 
 USTRUCT()
@@ -59,6 +60,9 @@ public:
 	TSubclassOf<AActor> _Wall;
 
 	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint")
+	TSubclassOf<AActor> _Door;
+
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint")
 	TSubclassOf<AActor> _Dots;
 
 	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint|Character")
@@ -76,7 +80,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint|Character")
 	TSubclassOf<AActor> _Clyde;
 
-	TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
-
+	//TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
+	TArray <TArray<F_GridData>> _MazeGrid;
 
 };

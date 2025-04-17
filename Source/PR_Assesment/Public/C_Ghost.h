@@ -52,5 +52,10 @@ public:
 	FColor _DebugColor = FColor::White;
 
 	FVector2D _CurrentTargetGridPosition;
+	TArray<FVector2D> _AvailableDirection;
+
+	int32 _GhostTurnWaitFrame = 15;
+	int32 _CurrentFrameCount = 0;
+	
 
 };

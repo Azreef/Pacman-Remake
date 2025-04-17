@@ -30,42 +30,53 @@ void AC_Ghost::Tick(float DeltaTime)
             //DEBUG HERE
         }
         
-        UpdateDirection();     
+          
+
+        if (CalculatePossiblePath(true, _AvailableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
+        {
+            if (_CurrentFrameCount >= _GhostTurnWaitFrame)
+            {
+                UpdateDirection();
+                _CurrentFrameCount = 0;
+            }
+            else
+            {
+                _CurrentFrameCount++;
+            }
+             
+        }
+        else if (!CalculatePossiblePath(true, _AvailableDirection))
+        {
+            if (GEngine)
+                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "No Path Found!");
+        }
+
     }
 }
 
 void AC_Ghost::UpdateDirection()
 {
-    TArray<FVector2D> availableDirection;
-
-    if (CalculatePossiblePath(true, availableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
-    {
-        
         FVector2D nextDirection = FVector2D::ZeroVector;
         
         if (_CurrentState == E_GhostState::Chase)//Chase Mode
         {
             _CurrentTargetGridPosition = CalculateChaseTargetGrid();
 
-            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, availableDirection);
+            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
         }
         else if (_CurrentState == E_GhostState::Scatter)//Scatter Mode
         {
            
             _CurrentTargetGridPosition = _ScatterGridCoordinate;
                        
-            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, availableDirection);
+            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
         }
 
         MoveTowards(nextDirection);
         _LatestIntersectionGrid = _CurrentGridPosition;
 
-    }
-    else if (!CalculatePossiblePath(true, availableDirection))
-    {
-        if (GEngine)
-            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "No Path Found!");
-    }
+    
+    
 }
 
 FVector2D AC_Ghost::CalculateChaseTargetGrid()

@@ -2,7 +2,12 @@
 
 #include "C_Blinky.h"
 
-FVector2D AC_Blinky::GetTargetTile(TArray<FVector2D>& availableDirection)
+FVector2D AC_Blinky::GetChaseGridStep(TArray<FVector2D>& availableDirection)
 {       
-    return GetDirectTileTo(_PacManPointer->_CurrentGridPosition, availableDirection);
+    _CurrentTargetGridPosition = _PacManPointer->_CurrentGridPosition;
+
+    return GetNextGridStep(_CurrentTargetGridPosition, availableDirection);
 }
+
+
+                

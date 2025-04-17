@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "C_MoveableCharacter.h"
 #include "E_GhostEnum.h"
+#include "DrawDebugHelpers.h"
 #include "C_Ghost.generated.h"
 
 /**
@@ -20,10 +21,16 @@ protected:
 	virtual void BeginPlay() override;
 
 	void UpdateDirection(); //Update Current Moving Direction (Not Position)
-	virtual FVector2D GetTargetTile(TArray<FVector2D>& availableDirection);//Get Next Target Tile (Is Different for Each Ghost Type) 
 
-	FVector2D GetDirectTileTo(FVector2D targetCoordinate, TArray<FVector2D>& availableDirection);//Get Next Direct Tile to Get to the Target Coordinate (Find Closest path To the Tile), Usually used for Scatter
+	FVector2D GetNextGridStep(FVector2D targetGridCoordinate, TArray<FVector2D>& availableDirection);//Get Next grid needed to reach target
+	virtual FVector2D CalculateChaseTargetGrid(); //Calculate Target Grid (Is Different for Each Ghost Type) 
+
+	//virtual FVector2D GetChaseGridStep(TArray<FVector2D>& availableDirection);//Get Next Target Tile (Is Different for Each Ghost Type) 
+	//virtual FVector2D GetScatterGridStep(TArray<FVector2D>& availableDirection);
+
 	bool GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection); // Get any available Direction Path & add all valid direction into 'availableDirection' | Return false if found none
+
+	void DrawDebug(FVector2D targetGridCoordinate, FColor debugColour);
 
 	FVector2D _LatestIntersectionGrid; // Used to make sure that intersection check (and turning) is only triggered once
 	AC_MoveableCharacter* _PacManPointer;
@@ -40,5 +47,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost", meta = (ToolTip = "Where The Ghost will Go When in Scatter Mode"))
 	FVector2D _ScatterGridCoordinate;
+
+	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug")
+	bool _IsDebugModeEnabled = false;
+
+	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug")
+	FColor _DebugColor = FColor::White;
+
+	FVector2D _CurrentTargetGridPosition;
 
 };

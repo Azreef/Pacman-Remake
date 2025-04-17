@@ -51,6 +51,7 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 	}
 	
 	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
+
 	if (!_MovingDirection.IsZero())
 	{
 		if (CheckWalkableGrid(nextGrid))
@@ -101,26 +102,47 @@ void AC_MoveableCharacter::SetTileSize(float tileSize)
 
 void AC_MoveableCharacter::SetMazeGrid(TArray<TArray<bool>>& mazeGrid)
 {
-	_MazeGrid = mazeGrid;
-
-	//DEBUG
-	for (int32 Y = 0; Y < _MazeGrid.Num(); Y++)
+	if (!mazeGrid.IsEmpty())
 	{
-		FString RowString;
+		_MazeGrid = mazeGrid;
 
-		for (int32 X = 0; X < _MazeGrid[Y].Num(); X++)
+		//DEBUG
+		for (int32 Y = 0; Y < _MazeGrid.Num(); Y++)
 		{
-			RowString += _MazeGrid[Y][X] ? TEXT("1 ") : TEXT("0 ");
-		}
+			FString RowString;
 
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *RowString);
+			for (int32 X = 0; X < _MazeGrid[Y].Num(); X++)
+			{
+				RowString += _MazeGrid[Y][X] ? TEXT("1 ") : TEXT("0 ");
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *RowString);
+		}
 	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("_MazeGrid is EMPTY!"));
+	}
+	
 
 }
 
 bool AC_MoveableCharacter::CheckWalkableGrid(FVector2D gridLocation)
 {
-	return _MazeGrid[gridLocation.X][gridLocation.Y];
+
+	if (!_MazeGrid.IsEmpty())
+	{
+		return _MazeGrid[gridLocation.X][gridLocation.Y];
+	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("_MazeGrid is EMPTY!"));
+
+		return false;
+	}
+	
 }
 
 void AC_MoveableCharacter::RotateCharacter(FVector2D direction)

@@ -40,17 +40,21 @@ void AC_Ghost::UpdateDirection()
         
         if (_CurrentState == E_GhostState::Chase)//Chase Mode
         {
-            nextDirection = GetTargetTile(availableDirection);
+            _CurrentTargetGridPosition = CalculateChaseTargetGrid();
+
+            nextDirection = GetNextGridStep(_CurrentTargetGridPosition, availableDirection);
         }
         else if (_CurrentState == E_GhostState::Scatter)//Scatter Mode
         {
-            nextDirection = GetDirectTileTo(_ScatterGridCoordinate, availableDirection);
+           
+            _CurrentTargetGridPosition = _ScatterGridCoordinate;
+                       
+            nextDirection = GetNextGridStep(_CurrentTargetGridPosition, availableDirection);
         }
 
         MoveTowards(nextDirection);
         _LatestIntersectionGrid = _CurrentGridPosition;
 
-   
     }
     else if (!GetPossiblePath(true, availableDirection))
     {
@@ -58,14 +62,19 @@ void AC_Ghost::UpdateDirection()
             GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "No Path Found!");
     }
 
+    if (_IsDebugModeEnabled)
+    {
+        //DEBUG HERE
+    }
+
 }
 
-FVector2D AC_Ghost::GetTargetTile(TArray<FVector2D>& availableDirection)
+FVector2D AC_Ghost::CalculateChaseTargetGrid()
 {
     return FVector2D();
 }
 
-FVector2D AC_Ghost::GetDirectTileTo(FVector2D targetCoordinate, TArray<FVector2D>& availableDirection)
+FVector2D AC_Ghost::GetNextGridStep(FVector2D targetGridCoordinate, TArray<FVector2D>& availableDirection)
 {
     float shortestDistance = 100;
     FVector2D bestDirection = _MovingDirection;
@@ -73,7 +82,7 @@ FVector2D AC_Ghost::GetDirectTileTo(FVector2D targetCoordinate, TArray<FVector2D
 
     for (FVector2D& currentDirection : availableDirection)
     {
-        float currentDistance = FVector2D::Distance(currentDirection + _CurrentGridPosition, targetCoordinate);
+        float currentDistance = FVector2D::Distance(currentDirection + _CurrentGridPosition, targetGridCoordinate);
 
 
         if (currentDistance < shortestDistance)
@@ -86,6 +95,7 @@ FVector2D AC_Ghost::GetDirectTileTo(FVector2D targetCoordinate, TArray<FVector2D
 
     return bestDirection;
 }
+
 
 bool AC_Ghost::GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection)
 {
@@ -124,6 +134,12 @@ bool AC_Ghost::GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2
     return isPossiblePathExist;
 }
 
+void AC_Ghost::DrawDebug(FVector2D targetCoordinate, FColor debugColour)
+{
+    DrawDebugSphere(GetWorld(), ConvertGridToWorld(targetCoordinate), 50, 31, FColor::Red, false, 0.3f, -1, 1);
+
+}
+        
 
 AC_MoveableCharacter* AC_Ghost::GetPacManPointer()
 {

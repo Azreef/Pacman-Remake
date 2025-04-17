@@ -2,11 +2,10 @@
 
 #include "C_Blinky.h"
 
-FVector2D AC_Blinky::GetChaseGridStep(TArray<FVector2D>& availableDirection)
+FVector2D AC_Blinky::CalculateChaseTargetGrid()
 {       
-    _CurrentTargetGridPosition = _PacManPointer->_CurrentGridPosition;
-
-    return GetNextGridStep(_CurrentTargetGridPosition, availableDirection);
+   
+    return _PacManPointer->_CurrentGridPosition;;
 }
 
 

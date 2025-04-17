@@ -12,7 +12,7 @@ class PR_ASSESMENT_API AC_Inky : public AC_Ghost
 	GENERATED_BODY()
 	
 protected:
-	FVector2D GetTargetTile(TArray<FVector2D>& availableDirection); //Set Target to Player Directly
+	FVector2D CalculateChaseTargetGrid();
 
 	float _CurrentBlinkySearchTime = 0;
 	AC_Blinky* _BlinkyPointer;

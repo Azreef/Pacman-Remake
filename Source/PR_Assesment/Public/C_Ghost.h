@@ -22,13 +22,10 @@ protected:
 
 	void UpdateDirection(); //Update Current Moving Direction (Not Position)
 
-	FVector2D GetNextGridStep(FVector2D targetGridCoordinate, TArray<FVector2D>& availableDirection);//Get Next grid needed to reach target
+	FVector2D CalculateNextGridStep(FVector2D targetGridCoordinate, TArray<FVector2D>& availableDirection);//Get Next grid needed to reach target
 	virtual FVector2D CalculateChaseTargetGrid(); //Calculate Target Grid (Is Different for Each Ghost Type) 
 
-	//virtual FVector2D GetChaseGridStep(TArray<FVector2D>& availableDirection);//Get Next Target Tile (Is Different for Each Ghost Type) 
-	//virtual FVector2D GetScatterGridStep(TArray<FVector2D>& availableDirection);
-
-	bool GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection); // Get any available Direction Path & add all valid direction into 'availableDirection' | Return false if found none
+	bool CalculatePossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection); // Get any available Direction Path & add all valid direction into 'availableDirection' | Return false if found none
 
 	void DrawDebug(FVector2D targetGridCoordinate, FColor debugColour);
 
@@ -49,7 +46,7 @@ public:
 	FVector2D _ScatterGridCoordinate;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug")
-	bool _IsDebugModeEnabled = false;
+	bool _IsDebugModeEnabled = true;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug")
 	FColor _DebugColor = FColor::White;

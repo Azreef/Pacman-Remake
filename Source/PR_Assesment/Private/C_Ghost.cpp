@@ -23,9 +23,14 @@ void AC_Ghost::Tick(float DeltaTime)
 
     if (_PacManPointer)
     {
+        if (_IsDebugModeEnabled)
+        {
+            DrawDebug(_CurrentTargetGridPosition, _DebugColor);
+
+            //DEBUG HERE
+        }
         
-       UpdateDirection();
-       
+        UpdateDirection();     
     }
 }
 
@@ -33,7 +38,7 @@ void AC_Ghost::UpdateDirection()
 {
     TArray<FVector2D> availableDirection;
 
-    if (GetPossiblePath(true, availableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
+    if (CalculatePossiblePath(true, availableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
     {
         
         FVector2D nextDirection = FVector2D::ZeroVector;
@@ -42,31 +47,25 @@ void AC_Ghost::UpdateDirection()
         {
             _CurrentTargetGridPosition = CalculateChaseTargetGrid();
 
-            nextDirection = GetNextGridStep(_CurrentTargetGridPosition, availableDirection);
+            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, availableDirection);
         }
         else if (_CurrentState == E_GhostState::Scatter)//Scatter Mode
         {
            
             _CurrentTargetGridPosition = _ScatterGridCoordinate;
                        
-            nextDirection = GetNextGridStep(_CurrentTargetGridPosition, availableDirection);
+            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, availableDirection);
         }
 
         MoveTowards(nextDirection);
         _LatestIntersectionGrid = _CurrentGridPosition;
 
     }
-    else if (!GetPossiblePath(true, availableDirection))
+    else if (!CalculatePossiblePath(true, availableDirection))
     {
         if (GEngine)
             GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "No Path Found!");
     }
-
-    if (_IsDebugModeEnabled)
-    {
-        //DEBUG HERE
-    }
-
 }
 
 FVector2D AC_Ghost::CalculateChaseTargetGrid()
@@ -74,7 +73,7 @@ FVector2D AC_Ghost::CalculateChaseTargetGrid()
     return FVector2D();
 }
 
-FVector2D AC_Ghost::GetNextGridStep(FVector2D targetGridCoordinate, TArray<FVector2D>& availableDirection)
+FVector2D AC_Ghost::CalculateNextGridStep(FVector2D targetGridCoordinate, TArray<FVector2D>& availableDirection)
 {
     float shortestDistance = 100;
     FVector2D bestDirection = _MovingDirection;
@@ -97,7 +96,7 @@ FVector2D AC_Ghost::GetNextGridStep(FVector2D targetGridCoordinate, TArray<FVect
 }
 
 
-bool AC_Ghost::GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection)
+bool AC_Ghost::CalculatePossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2D>& availableDirection)
 {
     availableDirection.Empty();
 
@@ -134,10 +133,11 @@ bool AC_Ghost::GetPossiblePath(bool isIgnoringOppositeDirection, TArray<FVector2
     return isPossiblePathExist;
 }
 
-void AC_Ghost::DrawDebug(FVector2D targetCoordinate, FColor debugColour)
+void AC_Ghost::DrawDebug(FVector2D targetCoordinate, FColor debugColour)        
 {
-    DrawDebugSphere(GetWorld(), ConvertGridToWorld(targetCoordinate), 50, 31, FColor::Red, false, 0.3f, -1, 1);
 
+    DrawDebugSphere(GetWorld(), ConvertGridToWorld(targetCoordinate), 30, 10, debugColour, false, 0, 0, 10);
+    DrawDebugLine(GetWorld(), GetActorLocation(), ConvertGridToWorld(targetCoordinate), debugColour, false, 0, -1, 10);
 }
         
 

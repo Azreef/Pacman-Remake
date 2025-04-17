@@ -11,6 +11,6 @@ class PR_ASSESMENT_API AC_Blinky : public AC_Ghost
 	GENERATED_BODY()
 	
 protected:
-	FVector2D GetChaseGridStep(TArray<FVector2D>& availableDirection); 
+	FVector2D CalculateChaseTargetGrid();
 
 };

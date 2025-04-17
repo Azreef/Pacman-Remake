@@ -11,5 +11,5 @@ class PR_ASSESMENT_API AC_Clyde : public AC_Ghost
 	GENERATED_BODY()
 	
 protected:
-	FVector2D GetTargetTile(TArray<FVector2D>& availableDirection); //Set Target to Player Directly
+	FVector2D CalculateChaseTargetGrid();
 };

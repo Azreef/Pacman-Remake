@@ -3,6 +3,7 @@
 
 #include "C_Ghost.h"
 #include "C_PacManCharacter.h"
+#include "C_GhostManager.h"
 
 void AC_Ghost::BeginPlay()
 {
@@ -31,17 +32,16 @@ void AC_Ghost::Tick(float DeltaTime)
         }
         
           
-
         if (CalculatePossiblePath(true, _AvailableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
         {
-            if (_CurrentFrameCount >= _GhostTurnWaitFrame)
+            if (_CurrentTurnWaitTime >= _GhostTurnWaitTime)
             {
                 UpdateDirection();
-                _CurrentFrameCount = 0;
+                _CurrentTurnWaitTime = 0;
             }
             else
             {
-                _CurrentFrameCount++;
+                _CurrentTurnWaitTime +=DeltaTime;
             }
              
         }
@@ -56,27 +56,48 @@ void AC_Ghost::Tick(float DeltaTime)
 
 void AC_Ghost::UpdateDirection()
 {
-        FVector2D nextDirection = FVector2D::ZeroVector;
         
-        if (_CurrentState == E_GhostState::Chase)//Chase Mode
-        {
-            _CurrentTargetGridPosition = CalculateChaseTargetGrid();
+    if ((_CurrentState == E_GhostState::ExitingHome) && _CurrentGridPosition == _HouseExitGridCoordinate)//Finishes Exiting Home
+    {
+        _CurrentState = _GhostManager->_CurrentGlobalGhostState;
+    }
+    
+    FVector2D nextDirection = FVector2D::ZeroVector;
+        
+    if (_CurrentState == E_GhostState::Chase)//Chase Mode
+    {
+        _CurrentTargetGridPosition = CalculateChaseTargetGrid();
 
-            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
-        }
-        else if (_CurrentState == E_GhostState::Scatter)//Scatter Mode
-        {
+        nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
+    }
+    else if (_CurrentState == E_GhostState::Scatter)//Scatter Mode
+    {
            
-            _CurrentTargetGridPosition = _ScatterGridCoordinate;
+        _CurrentTargetGridPosition = _ScatterGridCoordinate;
                        
-            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
-        }
+        nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
+    }
+    else if (_CurrentState == E_GhostState::ExitingHome)//Exiting Home Mode
+    {
 
+        _CurrentTargetGridPosition = _HouseExitGridCoordinate;
+
+        nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
+    }
+        
+
+
+    if (!(_CurrentState == E_GhostState::AtHome))//If at Home, Stay Put
+    {
         MoveTowards(nextDirection);
         _LatestIntersectionGrid = _CurrentGridPosition;
-
-    
-    
+    }
+    else
+    {
+        _CurrentTargetGridPosition = _CurrentGridPosition;
+        _MovingDirection = FVector2D::ZeroVector;
+    }
+       
 }
 
 FVector2D AC_Ghost::CalculateChaseTargetGrid()
@@ -152,6 +173,11 @@ void AC_Ghost::DrawDebug(FVector2D targetCoordinate, FColor debugColour)
 }
         
 
+void AC_Ghost::SetGhostManager(class AC_GhostManager* newGhostManager)
+{
+    _GhostManager = newGhostManager;
+}
+
 AC_MoveableCharacter* AC_Ghost::GetPacManPointer()
 {
     AActor* foundActor = UGameplayStatics::GetActorOfClass(GetWorld(), AC_PacManCharacter::StaticClass());
@@ -169,5 +195,36 @@ void AC_Ghost::SetState(E_GhostState newState, bool shouldChangeDirection)
     }
     
     
+}
+
+bool AC_Ghost::CheckWalkableGrid(FVector2D gridLocation)
+{
+    if (!_MazeGrid->IsEmpty())
+    {
+        int indexX = gridLocation.X;
+        int indexY = gridLocation.Y;
+
+        if ((*_MazeGrid)[indexX][indexY].tileType == E_TileType::Door) //Ghost can go through door if is in ExitingHome State
+        {
+            if (_CurrentState == E_GhostState::ExitingHome)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return (*_MazeGrid)[indexX][indexY].isWalkable;
+        }
+    }
+    else
+    {
+        if (GEngine)
+            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("_MazeGrid is EMPTY!"));
+
+        return false;
+    }
+
+    return false;
+
 }
 

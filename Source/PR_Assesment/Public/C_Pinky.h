@@ -12,4 +12,9 @@ class PR_ASSESMENT_API AC_Pinky : public AC_Ghost
 	
 protected:
 	FVector2D CalculateChaseTargetGrid();
+
+public:
+	AC_Pinky();
+
+
 };

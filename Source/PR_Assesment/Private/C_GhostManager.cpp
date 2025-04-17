@@ -2,6 +2,7 @@
 
 
 #include "C_GhostManager.h"
+#include "C_Ghost.h"
 
 // Sets default values
 AC_GhostManager::AC_GhostManager()
@@ -31,6 +32,26 @@ void AC_GhostManager::Tick(float DeltaTime)
 			GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, timeDebugString);
 		}
 	}
+
+	if (CheckIfAnyGhostInHouse())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, FString("Ghost Release Timer: ") + FString::SanitizeFloat(_CurrentGhostHouseTime));
+
+		if (_CurrentGhostHouseTime >= _MaxGhostHouseTime)
+		{
+			ReleaseGhost();
+			GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, "RELEASING GHOST");
+		}
+		else
+		{
+			_CurrentGhostHouseTime += DeltaTime;
+		}
+	}
+	else
+	{
+		_CurrentGhostHouseTime = 0;
+	}
+
 }
 
 void AC_GhostManager::StartPhase()
@@ -41,19 +62,17 @@ void AC_GhostManager::StartPhase()
 	{
 		_CurrentGlobalGhostState = E_GhostState::Chase;
 		timeToSet = _PhaseDurationList[_CurrentPhaseLevel].chaseDuration;
-		UpdateAllGhostState(E_GhostState::Chase);
+		UpdateAllGhostState(E_GhostState::Chase, false);
 
 	}
 	else if (_CurrentGlobalGhostState == E_GhostState::Chase) //Switch Mode to Scatter
 	{
 		_CurrentGlobalGhostState = E_GhostState::Scatter;
 		timeToSet = _PhaseDurationList[_CurrentPhaseLevel].scatterDuration;
-		UpdateAllGhostState(E_GhostState::Scatter);
+		UpdateAllGhostState(E_GhostState::Scatter, false);
 
 		_CurrentPhaseLevel++;
 	}
-
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::SanitizeFloat(timeToSet));
 
 	GetWorldTimerManager().SetTimer(_GhostTimerHandle, this, &AC_GhostManager::StartPhase, timeToSet, true);
 
@@ -64,11 +83,22 @@ void AC_GhostManager::StartPhase()
 
 }
 
-void AC_GhostManager::UpdateAllGhostState(E_GhostState)
+void AC_GhostManager::UpdateAllGhostState(E_GhostState newGhostState, bool isIncludingGhostAtHome)
 {
 	for (AC_Ghost* currentGhost : _GhostList)
 	{
-		currentGhost->SetState(_CurrentGlobalGhostState,true);
+		if (isIncludingGhostAtHome) //Update all ghost Including one at Home
+		{
+			currentGhost->SetState(newGhostState, true);
+		}
+		else //Set only outside Home
+		{
+			if (!((*currentGhost)._CurrentState == E_GhostState::AtHome))
+			{
+				currentGhost->SetState(newGhostState, true);
+			}
+		}
+		
 	}
 
 }
@@ -93,5 +123,53 @@ void AC_GhostManager::AddToGhostList(AC_Ghost* newGhost)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "GHOST MANAGER: NEW GHOST POINTER IS NULL");
 	}
 	
+}
+
+bool AC_GhostManager::CheckIfAnyGhostInHouse()
+{
+	bool IsGhostInsideHouse = false;
+
+	for (AC_Ghost* currentGhost : _GhostList)
+	{
+		if ((*currentGhost)._CurrentState == E_GhostState::AtHome)
+		{
+			IsGhostInsideHouse = true;
+		}
+	}
+
+	return IsGhostInsideHouse;
+}
+
+void AC_GhostManager::ReleaseGhost()
+{
+	//Release based on priority (Pinky -> Inky -> Clyde)
+	for (AC_Ghost* currentGhost : _GhostList)
+	{
+		if ((*currentGhost)._CurrentState == E_GhostState::AtHome)
+		{
+			if ((*currentGhost)._GhostType == E_GhostType::Blinky)
+			{
+				(*currentGhost).SetState(E_GhostState::ExitingHome, false);
+				break;
+			}
+			else if ((*currentGhost)._GhostType == E_GhostType::Pinky)
+			{
+				(*currentGhost).SetState(E_GhostState::ExitingHome, false);
+				break;
+			}
+			else if ((*currentGhost)._GhostType == E_GhostType::Inky)
+			{
+				(*currentGhost).SetState(E_GhostState::ExitingHome, false);
+				break;
+			}
+			else if ((*currentGhost)._GhostType == E_GhostType::Clyde)
+			{
+				(*currentGhost).SetState(E_GhostState::ExitingHome, false);
+				break;
+			}
+		}
+	}
+
+	_CurrentGhostHouseTime = 0;
 }
 

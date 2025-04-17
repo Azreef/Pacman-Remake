@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "E_GhostEnum.h"
-#include "C_Ghost.h"
 #include "C_GhostManager.generated.h"
 
 USTRUCT()
@@ -40,14 +39,19 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void StartPhase();
-	void UpdateAllGhostState(E_GhostState);
-	void AddToGhostList(AC_Ghost* newGhost);
+	void StartPhase(); //Start the Scatter -> Chase Sequences & Timer
+	void UpdateAllGhostState(E_GhostState newGhostState, bool isIncludingGhostAtHome);
+	void AddToGhostList(class AC_Ghost* newGhost);
+	bool CheckIfAnyGhostInHouse();
+	void ReleaseGhost(); //Release Ghost From their house
 
 	TArray<AC_Ghost*> _GhostList;
-	
 
 	int _CurrentPhaseLevel = 0;
+
+	float _CurrentGhostHouseTime = 0;
+	UPROPERTY(EditAnywhere, Category = "Properties", meta = (ToolTip = "How long the ghost will stay at house (in seconds)"))
+	float _MaxGhostHouseTime = 5;
 
 	bool _IsTimerInitialized = false;
 

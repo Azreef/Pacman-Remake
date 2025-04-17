@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
-#include "C_GhostManager.h"
 #include "E_GhostEnum.h"
 #include "F_MazeStruct.h"
 #include "C_LevelLoader.generated.h"

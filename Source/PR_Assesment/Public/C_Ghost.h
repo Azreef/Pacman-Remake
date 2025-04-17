@@ -36,14 +36,19 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SetGhostManager(class AC_GhostManager* newGhostManager);
 	AC_MoveableCharacter* GetPacManPointer();//Get PacMan Data for targeting purposes
 	void SetState(E_GhostState newState, bool shouldChangeDirection);
+	bool CheckWalkableGrid(FVector2D gridLocation);
 	
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost")
 	E_GhostState _CurrentState;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost", meta = (ToolTip = "Where The Ghost will Go When in Scatter Mode"))
 	FVector2D _ScatterGridCoordinate;
+
+	UPROPERTY(EditAnywhere, Category = "Character|Ghost", meta = (ToolTip = "Where The Ghost will Go When Exiting House"))
+	FVector2D _HouseExitGridCoordinate = FVector2D(12,11);
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug")
 	bool _IsDebugModeEnabled = true;
@@ -54,8 +59,14 @@ public:
 	FVector2D _CurrentTargetGridPosition;
 	TArray<FVector2D> _AvailableDirection;
 
-	int32 _GhostTurnWaitFrame = 15;
-	int32 _CurrentFrameCount = 0;
+	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug", meta = (ToolTip = "How long the ghost will be delayed before making a turn (In Seconds)"))
+	float _GhostTurnWaitTime = 0.15f;
+
+	float _CurrentTurnWaitTime = 0;
+	
+	E_GhostType _GhostType;
+
+	AC_GhostManager* _GhostManager;
 	
 
 };

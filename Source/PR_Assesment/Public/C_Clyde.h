@@ -12,4 +12,7 @@ class PR_ASSESMENT_API AC_Clyde : public AC_Ghost
 	
 protected:
 	FVector2D CalculateChaseTargetGrid();
+
+public:
+	AC_Clyde();
 };

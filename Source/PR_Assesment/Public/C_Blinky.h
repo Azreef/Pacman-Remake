@@ -13,4 +13,6 @@ class PR_ASSESMENT_API AC_Blinky : public AC_Ghost
 protected:
 	FVector2D CalculateChaseTargetGrid();
 
+public:
+	AC_Blinky();
 };

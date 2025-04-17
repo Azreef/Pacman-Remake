@@ -16,3 +16,8 @@ FVector2D AC_Clyde::CalculateChaseTargetGrid()
     }
    
 }
+
+AC_Clyde::AC_Clyde()
+{
+    E_GhostType _GhostType = E_GhostType::Clyde;
+}

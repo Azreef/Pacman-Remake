@@ -3,6 +3,8 @@
 
 #include "C_LevelLoader.h"
 #include "C_MoveableCharacter.h"
+#include "C_GhostManager.h"
+#include "C_Ghost.h"
 
 // Sets default values
 AC_LevelLoader::AC_LevelLoader()
@@ -157,7 +159,11 @@ void AC_LevelLoader::GenerateMaze()
 			moveAbleCharacter->SetMazeGrid(&_MazeGrid);
 			moveAbleCharacter->SetTileSize(_TileSize);
 
-			ghostManager->AddToGhostList(Cast<AC_Ghost>(spawnedGhostActor));
+			AC_Ghost* spawnedGhost = Cast<AC_Ghost>(spawnedGhostActor);
+
+			spawnedGhost->SetGhostManager(ghostManager);
+			//spawnedGhost->_CurrentState = ghostManager->_CurrentGlobalGhostState;
+			ghostManager->AddToGhostList(spawnedGhost);
 
 			if (GEngine)
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SPAWN " + UEnum::GetValueAsString(currentGhostData.ghostSpawnType));

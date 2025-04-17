@@ -1,6 +1,7 @@
 
 
 #include "C_Inky.h"
+#include "C_Blinky.h"
 
 void AC_Inky::Tick(float DeltaTime)
 {
@@ -18,6 +19,11 @@ void AC_Inky::Tick(float DeltaTime)
         if (GEngine)
             GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, "INKY: CANNOT FIND BLINKY");
     }
+}
+
+AC_Inky::AC_Inky()
+{
+    E_GhostType _GhostType = E_GhostType::Inky;
 }
 
 

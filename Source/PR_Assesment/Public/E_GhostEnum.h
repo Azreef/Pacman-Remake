@@ -14,6 +14,8 @@ enum class E_GhostState : uint8
 {
 	Chase,
 	Scatter,
+	AtHome,
+	ExitingHome,
 };
 
 UENUM()

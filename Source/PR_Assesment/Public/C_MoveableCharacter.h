@@ -22,10 +22,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	//Moving Functions (Change Direction, Not Position)
-	void MoveUp();
-	void MoveDown();
-	void MoveLeft();
-	void MoveRight();
 	void MoveTowards(FVector2D direction);
 
 	// Called to bind functionality to input

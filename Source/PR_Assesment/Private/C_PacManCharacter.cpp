@@ -5,6 +5,28 @@
 #include "C_GameManager.h"
 
 
+void AC_PacManCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (_IntendedDirectionTimer <= _IntendedDirectionDuration)
+	{
+		MoveTowards(_IntendedDirection);
+		_IntendedDirectionTimer = _IntendedDirectionTimer + DeltaTime;
+	}
+	else if ((_IntendedDirectionTimer > _IntendedDirectionDuration))
+	{
+		_IntendedDirection = _PreviousMoveDirection;
+		MoveTowards(_IntendedDirection);
+
+	}
+
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString(FString::SanitizeFloat(_IntendedDirectionTimer)));
+
+}
+
+
 void AC_PacManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	//Set up Mapping Context
@@ -41,23 +63,29 @@ void AC_PacManCharacter::MoveInput(const FInputActionValue& movementValue)
 
 	if (moveDirection.X > 0.5f)
 	{
+		_IntendedDirection = FVector2D(1, 0);
 		// Move Right
-		MoveRight();
+		
 	}
 	else if (moveDirection.X < -0.5f)
 	{
 		// Move Left
-		MoveLeft();
+		_IntendedDirection = FVector2D(-1, 0);
+		
 	}
 	else if (moveDirection.Y > 0.5f)
 	{
 		// Move Up
-		MoveUp();
+		_IntendedDirection = FVector2D(0, -1);
+		
 	}
 	else if (moveDirection.Y < -0.5f)
 	{
 		// Move Down
-		MoveDown();
+		_IntendedDirection = FVector2D(0, 1);
+		
 	}
+
+	_IntendedDirectionTimer = 0;
 
 }

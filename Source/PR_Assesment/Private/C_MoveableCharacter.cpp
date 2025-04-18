@@ -46,6 +46,22 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 	FVector currentPosition = GetActorLocation();
 	_CurrentGridPosition = ConvertWorldToGrid(currentPosition);
 
+	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
+
+	if (!_MovingDirection.IsZero())
+	{
+		if (CheckWalkableGrid(nextGrid))
+		{
+			_TargetGridPosition = nextGrid;
+			_PreviousMoveDirection = _MovingDirection;
+			RotateCharacter(_MovingDirection);
+		}
+		else
+		{
+			MoveTowards(_PreviousMoveDirection);
+		}
+	}
+
 	if (!GetActorLocation().Equals(ConvertGridToWorld(_TargetGridPosition), 1))
 	{
 		if (_CurrentGridPosition.X < 1) //Teleport
@@ -60,57 +76,23 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 		}
 		else
 		{
-			FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, 300);
-			SetActorLocation(newPosition);
+			if (currentPosition.X == ConvertGridToWorld(_TargetGridPosition).X || currentPosition.Y == ConvertGridToWorld(_TargetGridPosition).Y)
+			{
+				FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, 300);
+				SetActorLocation(newPosition);
+			}
+
 		}
 
-		
-	}
-	
-	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
 
-	if (!_MovingDirection.IsZero())
-	{
-		if (CheckWalkableGrid(nextGrid))
-		{
-			_TargetGridPosition = nextGrid;
-			_PreviousMoveDirection = _MovingDirection;
-			RotateCharacter(_MovingDirection);
-		}
-		else
-		{
-			
-			_MovingDirection = _PreviousMoveDirection;
-		}
 	}
 
 }
 
-void AC_MoveableCharacter::MoveUp()
-{
-	_MovingDirection = FVector2D(0, -1);
-}
-
-void AC_MoveableCharacter::MoveDown()
-{
-	_MovingDirection = FVector2D(0, 1);
-}
-
-void AC_MoveableCharacter::MoveRight()
-{
-	_MovingDirection = FVector2D(1, 0);
-}
-
-void AC_MoveableCharacter::MoveTowards(FVector2D direction)
+void AC_MoveableCharacter::MoveTowards(FVector2D direction) //Changes Direction
 {
 	_MovingDirection = direction;
 }
-
-void AC_MoveableCharacter::MoveLeft()
-{
-	_MovingDirection = FVector2D(-1, 0);
-}
-
 
 void AC_MoveableCharacter::SetTileSize(float tileSize)
 {

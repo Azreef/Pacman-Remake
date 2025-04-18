@@ -51,7 +51,7 @@ public:
 	FVector2D _ScatterGridCoordinate;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost", meta = (ToolTip = "Where The Ghost will Go When Exiting House"))
-	FVector2D _HouseExitGridCoordinate = FVector2D(12,11);
+	FVector2D _HouseExitGridCoordinate = FVector2D(13,11);
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug")
 	bool _IsThisGhostDebugEnabled = true;

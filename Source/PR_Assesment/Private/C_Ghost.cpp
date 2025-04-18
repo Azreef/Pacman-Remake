@@ -83,20 +83,37 @@ void AC_Ghost::UpdateDirection()
 
         _CurrentTargetGridPosition = _HouseExitGridCoordinate;
 
-        nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
+        if(_CurrentGridPosition == _HouseExitGridCoordinate)
+        {
+            _CurrentState = _GhostManager->_CurrentGlobalGhostState;
+            //UpdateDirection();
+        }
+        else
+        {
+            nextDirection = CalculateNextGridStep(_CurrentTargetGridPosition, _AvailableDirection);
+        }
+       
     }
         
-
-
-    if (!(_CurrentState == E_GhostState::AtHome))//If at Home, Stay Put
+    if (!(_CurrentState == E_GhostState::AtHome))
     {
+        
         MoveTowards(nextDirection);
         _LatestIntersectionGrid = _CurrentGridPosition;
     }
-    else
+    else //If at Home, Stay Put
     {
+        //Roam in House
         _CurrentTargetGridPosition = _CurrentGridPosition;
-        _MovingDirection = FVector2D::ZeroVector;
+        if (!CheckWalkableGrid(_CurrentGridPosition + FVector2D(0, -1)))
+        {
+            _MovingDirection = FVector2D(0, 1);
+        }
+        else if (!CheckWalkableGrid(_CurrentGridPosition + FVector2D(0, 1)))
+        {
+            _MovingDirection = FVector2D(0, -1);
+        }
+
     }
        
 }
@@ -167,7 +184,6 @@ bool AC_Ghost::CalculatePossiblePath(bool isIgnoringOppositeDirection, TArray<FV
 
 void AC_Ghost::DrawDebug(FVector2D targetCoordinate, FColor debugColour)        
 {
-
     DrawDebugSphere(GetWorld(), ConvertGridToWorld(targetCoordinate), 30, 10, debugColour, false, 0, 0, 10);
     DrawDebugLine(GetWorld(), GetActorLocation(), ConvertGridToWorld(targetCoordinate), debugColour, false, 0, -1, 10);
 }

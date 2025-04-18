@@ -106,7 +106,7 @@ void AC_GhostManager::UpdateAllGhostState(E_GhostState newGhostState, bool isInc
 		}
 		else //Set only outside Home
 		{
-			if (!((*currentGhost)._CurrentState == E_GhostState::AtHome))
+			if (!((*currentGhost)._CurrentState == E_GhostState::AtHome && !((*currentGhost)._CurrentState == E_GhostState::ExitingHome)))
 			{
 				currentGhost->SetState(newGhostState, true);
 			}

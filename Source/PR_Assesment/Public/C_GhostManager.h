@@ -53,7 +53,7 @@ public:
 
 	float _CurrentGhostHouseTime = 0;
 	UPROPERTY(EditAnywhere, Category = "Properties", meta = (ToolTip = "How long the ghost will stay at house (in seconds)"))
-	float _MaxGhostHouseTime = 5;
+	float _MaxGhostHouseTime = 4;
 
 	int _GhostLeavesCounter = 1;
 

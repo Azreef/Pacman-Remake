@@ -5,6 +5,13 @@
 #include "C_MoveableCharacter.h"
 #include "C_GhostManager.h"
 #include "C_Ghost.h"
+#include "IImageWrapper.h"
+#include "IImageWrapperModule.h"
+#include "Modules/ModuleManager.h"
+#include "Misc/FileHelper.h"
+#include "HAL/PlatformFilemanager.h"
+#include "Engine/Texture2D.h"
+#include "ImageUtils.h"
 
 // Sets default values
 AC_LevelLoader::AC_LevelLoader()
@@ -29,11 +36,22 @@ void AC_LevelLoader::Tick(float DeltaTime)
 }
 
 void AC_LevelLoader::GenerateMaze()
-{
+{	
+	FString ImagePath = FPaths::ProjectUserDir() + "Content/Resources/Level1.png";
+	_MazeTexture = LoadTextureFromDisk(ImagePath);
+
 	//Getting Pixel Data
+	if (!_MazeTexture)
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("_MazeTexture is EMPTY!"));
+
+		return;
+	}
+	_MazeTexture->UpdateResource();
 	FTexture2DMipMap& mipMap = _MazeTexture->GetPlatformData()->Mips[0];
 	FByteBulkData* rawImageData = &mipMap.BulkData;
-	FColor* allPixel = static_cast<FColor*>(rawImageData->Lock(LOCK_READ_ONLY));
+	FColor* allPixel = reinterpret_cast<FColor*>(rawImageData->Lock(LOCK_READ_ONLY));
 	
 	int32 mazeWidth = mipMap.SizeX;
 	int32 mazeHeight = mipMap.SizeY;
@@ -194,3 +212,47 @@ void AC_LevelLoader::SpawnCamera(FVector2D cameraPosition, float zoom)
 
 }
 
+UTexture2D* AC_LevelLoader::LoadTextureFromDisk(const FString& FullFilePath)
+{
+	// Load image file into binary array
+	TArray<uint8> RawFileData;
+	if (!FFileHelper::LoadFileToArray(RawFileData, *FullFilePath)) {
+		UE_LOG(LogTemp, Error, TEXT("Failed to load file from path: %s"), *FullFilePath);
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Failed to decode image: %s"));
+
+		return nullptr;
+	}
+
+	// Get the image wrapper module for decoding
+	IImageWrapperModule& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
+	TSharedPtr<IImageWrapper> ImageWrapper = ImageWrapperModule.CreateImageWrapper(EImageFormat::PNG); // or JPEG
+
+	if (ImageWrapper.IsValid() && ImageWrapper->SetCompressed(RawFileData.GetData(), RawFileData.Num())) {
+		TArray64<uint8> UncompressedBGRA;
+
+		if (ImageWrapper.Get()->GetRaw(ERGBFormat::BGRA, 8, UncompressedBGRA)) {
+			
+			// Create UTexture2D		
+			UTexture2D* NewTexture = UTexture2D::CreateTransient(
+				ImageWrapper->GetWidth(),
+				ImageWrapper->GetHeight(),
+				PF_B8G8R8A8
+			);
+
+			if (!NewTexture) return nullptr;
+
+			void* TextureData = NewTexture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+			FMemory::Memcpy(TextureData, UncompressedBGRA.GetData(), UncompressedBGRA.Num());
+			NewTexture-> GetPlatformData()->Mips[0].BulkData.Unlock();
+
+			NewTexture->UpdateResource();
+			return NewTexture;
+		}
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("Failed to decode image: %s"), *FullFilePath);
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Failed to decode image: %s"));
+	return nullptr;
+}

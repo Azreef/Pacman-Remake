@@ -39,9 +39,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	
-	UPROPERTY(EditAnywhere, Category = "Maze|Properties", meta = (ToolTip = "Texture used for generating the maze"))
+	//UTexture2D* _MazeTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Resources/Level1.Level1"));
 	UTexture2D* _MazeTexture;
+	//UPROPERTY(EditAnywhere, Category = "Maze|Properties", meta = (ToolTip = "Texture used for generating the maze"))
+	//UTexture2D* _MazeTexture;
 
 	UPROPERTY(EditAnywhere, Category = "Maze|Properties", meta = (ToolTip = "How big is the tile for each grid"))
 	float _TileSize = 100;
@@ -84,5 +85,7 @@ public:
 
 	//TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
 	TArray <TArray<F_GridData>> _MazeGrid;
+
+	UTexture2D* LoadTextureFromDisk(const FString& FullFilePath);
 
 };

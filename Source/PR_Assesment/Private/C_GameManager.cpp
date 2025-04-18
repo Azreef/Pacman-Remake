@@ -15,7 +15,7 @@ AC_GameManager::AC_GameManager()
 void AC_GameManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame

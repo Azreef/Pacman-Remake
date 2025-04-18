@@ -37,8 +37,8 @@ public:
 	FVector2D _IntendedDirection;
 
 
-	UPROPERTY(EditAnywhere, Category = "Movement", meta = (ToolTip = "Used to Simulate Cornering (moving the joystick in the direction one wishes to go well before reaching the center of a turn)"))
-	float _IntendedDirectionDuration = 0.2;
+	UPROPERTY(EditAnywhere, Category = "Movement", meta = (ToolTip = "How long does the input stays (Used to Simulate Cornering)"))
+	float _IntendedDirectionDuration = 0.5;
 
 	float _IntendedDirectionTimer = 0;
 };

@@ -20,10 +20,6 @@ void AC_PacManCharacter::Tick(float DeltaTime)
 		MoveTowards(_IntendedDirection);
 
 	}
-
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString(FString::SanitizeFloat(_IntendedDirectionTimer)));
-
 }
 
 

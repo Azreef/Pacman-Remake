@@ -93,7 +93,6 @@ void AC_GhostManager::StartPhase()
 		_IsTimerInitialized = true;
 	}
 	
-
 }
 
 void AC_GhostManager::UpdateAllGhostState(E_GhostState newGhostState, bool isIncludingGhostAtHome)

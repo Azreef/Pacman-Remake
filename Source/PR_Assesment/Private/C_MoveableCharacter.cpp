@@ -43,48 +43,60 @@ void AC_MoveableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 {
+	
 	FVector currentPosition = GetActorLocation();
 	_CurrentGridPosition = ConvertWorldToGrid(currentPosition);
 
+	//TELEPORT PLAYER 
+	if (!GetActorLocation().Equals(ConvertGridToWorld(_TargetGridPosition), 1))
+	{
+		if (_CurrentGridPosition.X < 1) //Teleport 
+		{
+			_CurrentGridPosition.X = _MazeWidth - 2;
+			SetActorLocation(ConvertGridToWorld(_CurrentGridPosition));
+
+		}
+		else if (_CurrentGridPosition.X >= _MazeWidth - 1) //Teleport 
+		{
+			_CurrentGridPosition.X = 2;
+			SetActorLocation(ConvertGridToWorld(_CurrentGridPosition));
+
+		}
+		else
+		{
+			FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, _MoveSpeed);
+			SetActorLocation(newPosition);
+		}
+
+	}
+
+	
 	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
+	bool isAtTileCenter = GetActorLocation().Equals(ConvertGridToWorld(_CurrentGridPosition), 1.0f); //To stop corner cutting
 
 	if (!_MovingDirection.IsZero())
 	{
 		if (CheckWalkableGrid(nextGrid))
 		{
-			_TargetGridPosition = nextGrid;
-			_PreviousMoveDirection = _MovingDirection;
-			RotateCharacter(_MovingDirection);
+			if (isAtTileCenter)
+			{
+				_TargetGridPosition = nextGrid;
+				_PreviousMoveDirection = _MovingDirection;
+				RotateCharacter(_MovingDirection);
+			}
 		}
 		else
 		{
 			MoveTowards(_PreviousMoveDirection);
-		}
-	}
 
-	if (!GetActorLocation().Equals(ConvertGridToWorld(_TargetGridPosition), 1))
-	{
-		if (_CurrentGridPosition.X < 1) //Teleport
-		{
-			_CurrentGridPosition.X = _MazeWidth - 2;
-			SetActorLocation(ConvertGridToWorld(_CurrentGridPosition));
-		}
-		else if (_CurrentGridPosition.X >= _MazeWidth - 1) //Teleport
-		{
-			_CurrentGridPosition.X = 2;
-			SetActorLocation(ConvertGridToWorld(_CurrentGridPosition));
-		}
-		else
-		{
-			if (currentPosition.X == ConvertGridToWorld(_TargetGridPosition).X || currentPosition.Y == ConvertGridToWorld(_TargetGridPosition).Y)
+			nextGrid = _CurrentGridPosition + _MovingDirection;
+			if (CheckWalkableGrid(nextGrid))
 			{
-				FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, 300);
-				SetActorLocation(newPosition);
+
+				_TargetGridPosition = nextGrid;
 			}
 
 		}
-
-
 	}
 
 }

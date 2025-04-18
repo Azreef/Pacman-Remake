@@ -63,8 +63,7 @@ public:
 	TArray<FVector2D> _AvailableDirection;
 
 	UPROPERTY(EditAnywhere, Category = "Character|Ghost|Debug", meta = (ToolTip = "How long the ghost will be delayed before making a turn (In Seconds)"))
-	float _GhostTurnWaitTime = 0.15f;
-
+	float _GhostTurnWaitTime = 0;
 	float _CurrentTurnWaitTime = 0;
 	
 	AC_GhostManager* _GhostManager;

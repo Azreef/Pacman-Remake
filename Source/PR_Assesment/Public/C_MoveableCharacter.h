@@ -54,7 +54,7 @@ public:
 	float _TileSize = 100;
 
 	UPROPERTY(EditAnywhere, Category = "Character", meta = (ToolTip = "Speed of The Character"))
-	float _MoveSpeed = 500;
+	float _MoveSpeed = 300;
 	
 	//SAVE DIRECTION VALUE, TEMP  DONT FORGET TO CHANGE TO ENUM LATER
 	//BASED ON PRIORITY up > left > down.

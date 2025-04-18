@@ -35,6 +35,7 @@ void AC_Ghost::Tick(float DeltaTime)
           
         if (CalculatePossiblePath(true, _AvailableDirection) && _LatestIntersectionGrid != _CurrentGridPosition)
         {
+            UpdateDirection();
             if (_CurrentTurnWaitTime >= _GhostTurnWaitTime)
             {
                 UpdateDirection();

@@ -48,8 +48,23 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 
 	if (!GetActorLocation().Equals(ConvertGridToWorld(_TargetGridPosition), 1))
 	{
-		FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, 300);
-		SetActorLocation(newPosition);
+		if (_CurrentGridPosition.X < 1) //Teleport
+		{
+			_CurrentGridPosition.X = _MazeWidth - 2;
+			SetActorLocation(ConvertGridToWorld(_CurrentGridPosition));
+		}
+		else if (_CurrentGridPosition.X >= _MazeWidth - 1) //Teleport
+		{
+			_CurrentGridPosition.X = 2;
+			SetActorLocation(ConvertGridToWorld(_CurrentGridPosition));
+		}
+		else
+		{
+			FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, 300);
+			SetActorLocation(newPosition);
+		}
+
+		
 	}
 	
 	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
@@ -108,6 +123,7 @@ void AC_MoveableCharacter::SetMazeGrid(TArray <TArray<F_GridData>>* mazeGrid)
 	{
 		_MazeGrid = mazeGrid;
 
+		_MazeWidth = _MazeGrid->Num();
 		//DEBUG
 		for (int32 Y = 0; Y < _MazeGrid->Num(); Y++)
 		{

@@ -71,5 +71,7 @@ public:
 
 	TArray <TArray<F_GridData>>* _MazeGrid;
 
+	int _MazeWidth = 31;
+
 	class AC_GameManager* _GameManager;
 };

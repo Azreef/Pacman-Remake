@@ -52,5 +52,4 @@ void AC_Inky::GetBlinkyPointer()
     AActor* foundActor = UGameplayStatics::GetActorOfClass(GetWorld(), AC_Blinky::StaticClass());
     _BlinkyPointer = Cast<AC_Blinky>(foundActor);
 
-   
 }

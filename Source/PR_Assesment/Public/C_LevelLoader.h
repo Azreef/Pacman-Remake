@@ -59,6 +59,9 @@ public:
 	TSubclassOf<AActor> _Wall;
 
 	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint")
+	TSubclassOf<AActor> _TeleporterFacade;
+
+	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint")
 	TSubclassOf<AActor> _Door;
 
 	UPROPERTY(EditAnywhere, Category = "Maze|Blueprint")

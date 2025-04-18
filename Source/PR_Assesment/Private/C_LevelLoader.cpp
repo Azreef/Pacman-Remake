@@ -85,6 +85,12 @@ void AC_LevelLoader::GenerateMaze()
 				GetWorld()->SpawnActor<AActor>(_Dots, spawnLocation, FRotator::ZeroRotator);
 
 			}
+			else if (currentPixel == FColor(255, 0, 255))//Spawn Teleporter
+			{
+				GetWorld()->SpawnActor<AActor>(_TeleporterFacade, FVector(spawnLocation.X, spawnLocation.Y, spawnLocation.Z + 100), FRotator::ZeroRotator);
+				isWalkable = true;
+				tileType = E_TileType::Teleporter;
+			}
 			else if (currentPixel == FColor::Blue)//Spawn Player
 			{
 				isPacManExist = true;
@@ -160,7 +166,7 @@ void AC_LevelLoader::GenerateMaze()
 			AC_Ghost* spawnedGhost = Cast<AC_Ghost>(spawnedGhostActor);
 
 			spawnedGhost->SetGhostManager(ghostManager);
-			//spawnedGhost->_CurrentState = ghostManager->_CurrentGlobalGhostState;
+			
 			ghostManager->AddToGhostList(spawnedGhost);
 
 		}

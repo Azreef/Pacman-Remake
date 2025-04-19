@@ -65,7 +65,7 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 		else
 		{
 			FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, _MoveSpeed);
-			SetActorLocation(newPosition);
+			SetActorLocation(newPosition,true);
 		}
 
 	}

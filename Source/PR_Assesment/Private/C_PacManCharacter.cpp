@@ -3,6 +3,27 @@
 
 #include "C_PacManCharacter.h"
 #include "C_GameManager.h"
+#include "Components/SphereComponent.h"
+
+
+AC_PacManCharacter::AC_PacManCharacter()
+{
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	_CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
+	_CollisionSphere->InitSphereRadius(30.f);
+	_CollisionSphere->SetupAttachment(RootComponent);
+	
+}
+
+
+void AC_PacManCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	_CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AC_PacManCharacter::OnOverlapBegin);
+}
 
 
 void AC_PacManCharacter::Tick(float DeltaTime)
@@ -20,6 +41,7 @@ void AC_PacManCharacter::Tick(float DeltaTime)
 		MoveTowards(_IntendedDirection);
 
 	}
+
 }
 
 
@@ -46,6 +68,7 @@ void AC_PacManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	}
 	
 }
+
 
 void AC_PacManCharacter::ToggleDebug(const FInputActionValue& movementValue)
 {
@@ -84,4 +107,18 @@ void AC_PacManCharacter::MoveInput(const FInputActionValue& movementValue)
 
 	_IntendedDirectionTimer = 0;
 
+}
+
+void AC_PacManCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HIT"));
+	
+	/*if (OtherActor && OtherActor != this)
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HIT"));
+		Cast<I_Collectable>(OtherActor)->OnCollected();
+
+	}*/
 }

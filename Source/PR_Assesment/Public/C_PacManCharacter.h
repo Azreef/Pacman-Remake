@@ -8,7 +8,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
+#include "I_Collectable.h"
 #include "C_PacManCharacter.generated.h"
+
+class USphereComponent;
 
 UCLASS()
 class PR_ASSESMENT_API AC_PacManCharacter : public AC_MoveableCharacter
@@ -18,10 +21,13 @@ class PR_ASSESMENT_API AC_PacManCharacter : public AC_MoveableCharacter
 protected:
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-
 	
+	virtual void BeginPlay() override;
 
 public:
+	
+
+	AC_PacManCharacter();
 	virtual void Tick(float DeltaTime);
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* _MoveInputAction;
@@ -33,6 +39,7 @@ public:
 	UInputMappingContext* _MappingContext;
 
 	void MoveInput(const FInputActionValue& Value);
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	void ToggleDebug(const FInputActionValue& movementValue);
 	FVector2D _IntendedDirection;
 
@@ -41,4 +48,7 @@ public:
 	float _IntendedDirectionDuration = 0.5;
 
 	float _IntendedDirectionTimer = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	USphereComponent* _CollisionSphere;
 };

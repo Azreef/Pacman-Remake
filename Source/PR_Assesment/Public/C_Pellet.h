@@ -4,16 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "C_GameManager.generated.h"
+#include "I_Collectable.h" 
+#include "C_Pellet.generated.h"
+
+class USphereComponent;
 
 UCLASS()
-class PR_ASSESMENT_API AC_GameManager : public AActor
+class PR_ASSESMENT_API AC_Pellet : public AActor, public I_Collectable
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AC_GameManager();
+	AC_Pellet();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,10 +26,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Category = "Debugging", meta = (ToolTip = "Enable Debugging Mode"))
-	bool _IsDebugModeEnabled = false;
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	USphereComponent* _CollisionSphere;
 
-
-	int _PlayerScore = 0;
-
+	UFUNCTION()
+	
+	virtual void OnCollected() override;
 };

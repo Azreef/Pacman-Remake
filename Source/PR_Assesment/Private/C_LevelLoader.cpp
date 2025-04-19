@@ -225,29 +225,29 @@ UTexture2D* AC_LevelLoader::LoadTextureFromDisk(const FString& FullFilePath)
 	}
 
 	// Get the image wrapper module for decoding
-	IImageWrapperModule& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
-	TSharedPtr<IImageWrapper> ImageWrapper = ImageWrapperModule.CreateImageWrapper(EImageFormat::PNG); // or JPEG
+	IImageWrapperModule& imageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
+	TSharedPtr<IImageWrapper> imageWrapper = imageWrapperModule.CreateImageWrapper(EImageFormat::PNG); // or JPEG
 
-	if (ImageWrapper.IsValid() && ImageWrapper->SetCompressed(RawFileData.GetData(), RawFileData.Num())) {
-		TArray64<uint8> UncompressedBGRA;
+	if (imageWrapper.IsValid() && imageWrapper->SetCompressed(RawFileData.GetData(), RawFileData.Num())) {
+		TArray64<uint8> uncompressedBGRA;
 
-		if (ImageWrapper.Get()->GetRaw(ERGBFormat::BGRA, 8, UncompressedBGRA)) {
+		if (imageWrapper.Get()->GetRaw(ERGBFormat::BGRA, 8, uncompressedBGRA)) {
 			
 			// Create UTexture2D		
-			UTexture2D* NewTexture = UTexture2D::CreateTransient(
-				ImageWrapper->GetWidth(),
-				ImageWrapper->GetHeight(),
+			UTexture2D* newTexture = UTexture2D::CreateTransient(
+				imageWrapper->GetWidth(),
+				imageWrapper->GetHeight(),
 				PF_B8G8R8A8
 			);
 
-			if (!NewTexture) return nullptr;
+			if (!newTexture) return nullptr;
 
-			void* TextureData = NewTexture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
-			FMemory::Memcpy(TextureData, UncompressedBGRA.GetData(), UncompressedBGRA.Num());
-			NewTexture-> GetPlatformData()->Mips[0].BulkData.Unlock();
+			void* TextureData = newTexture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
+			FMemory::Memcpy(TextureData, uncompressedBGRA.GetData(), uncompressedBGRA.Num());
+			newTexture-> GetPlatformData()->Mips[0].BulkData.Unlock();
 
-			NewTexture->UpdateResource();
-			return NewTexture;
+			newTexture->UpdateResource();
+			return newTexture;
 		}
 	}
 

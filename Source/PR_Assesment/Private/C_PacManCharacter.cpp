@@ -3,7 +3,7 @@
 
 #include "C_PacManCharacter.h"
 #include "C_GameManager.h"
-#include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 AC_PacManCharacter::AC_PacManCharacter()
@@ -11,9 +11,14 @@ AC_PacManCharacter::AC_PacManCharacter()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	_CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
-	_CollisionSphere->InitSphereRadius(30.f);
-	_CollisionSphere->SetupAttachment(RootComponent);
+	TriggerCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Trigger Capsule"));
+	TriggerCapsule->InitCapsuleSize(55.f, 96.0f);;
+	TriggerCapsule->SetCollisionProfileName(TEXT("Trigger"));
+	RootComponent = TriggerCapsule;
+	TriggerCapsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	TriggerCapsule->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	TriggerCapsule->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	TriggerCapsule->SetGenerateOverlapEvents(true);
 	
 }
 
@@ -22,7 +27,7 @@ void AC_PacManCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	_CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AC_PacManCharacter::OnOverlapBegin);
+	TriggerCapsule->OnComponentBeginOverlap.AddDynamic(this, &AC_PacManCharacter::OnOverlapBegin);
 }
 
 
@@ -109,16 +114,26 @@ void AC_PacManCharacter::MoveInput(const FInputActionValue& movementValue)
 
 }
 
-void AC_PacManCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AC_PacManCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HIT"));
-	
-	/*if (OtherActor && OtherActor != this)
+	if (OtherActor && (OtherActor != this))
 	{
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HIT"));
-		Cast<I_Collectable>(OtherActor)->OnCollected();
+		UE_LOG(LogTemp, Warning, TEXT("Overlapped: %s"), *OtherActor->GetName());
+	}
+}
 
-	}*/
+
+void AC_PacManCharacter::NotifyActorBeginOverlap(AActor* otherActor)
+{
+	Super::NotifyActorBeginOverlap(otherActor);
+
+	if (otherActor && otherActor != this)
+	{
+		
+		I_Collectable* collectAble = Cast<I_Collectable>(otherActor);
+		if (collectAble)
+		{
+			collectAble->OnCollected();
+		}
+	}
 }

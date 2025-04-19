@@ -86,6 +86,6 @@ public:
 	//TArray <TArray<bool>> _MazeGrid; //Stores Generated Grid [true - can walk | false - cannot walk (has walls)]
 	TArray <TArray<F_GridData>> _MazeGrid;
 
-	UTexture2D* LoadTextureFromDisk(const FString& FullFilePath);
+	UTexture2D* LoadTextureFromDisk(const FString& FullFilePath); //Load Texture Wrapper (Required for Packaged Build)
 
 };

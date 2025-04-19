@@ -33,6 +33,11 @@ void AC_MoveableCharacter::Tick(float DeltaTime)
 	UpdateMovement(DeltaTime);
 }
 
+void AC_MoveableCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+
 // Called to bind functionality to input
 void AC_MoveableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -64,25 +69,39 @@ void AC_MoveableCharacter::UpdateMovement(float deltaTime)
 		}
 		else
 		{
+			FHitResult HitResult;
 			FVector newPosition = FMath::VInterpConstantTo(currentPosition, ConvertGridToWorld(_TargetGridPosition), deltaTime, _MoveSpeed);
-			SetActorLocation(newPosition,true);
+			SetActorLocation(newPosition,true, &HitResult);
+
+			if (HitResult.IsValidBlockingHit())
+			{
+
+				if (GEngine)
+					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("HIT"));
+				OnOverlapBegin(HitResult.GetComponent(), HitResult.GetActor(), HitResult.GetComponent(), 0, true, HitResult);
+			}
 		}
 
 	}
 
 	
 	FVector2D nextGrid = _CurrentGridPosition + _MovingDirection;
-	bool isAtTileCenter = GetActorLocation().Equals(ConvertGridToWorld(_CurrentGridPosition), 1.0f); //To stop corner cutting
+	bool isAtTileCenter = GetActorLocation().Equals(ConvertGridToWorld(_CurrentGridPosition), _CornerMargin); //To stop corner cutting
 
 	if (!_MovingDirection.IsZero())
 	{
 		if (CheckWalkableGrid(nextGrid))
 		{
-			if (isAtTileCenter)
+			
+			if (isAtTileCenter  || ((_MovingDirection == -_PreviousMoveDirection)))
 			{
 				_TargetGridPosition = nextGrid;
 				_PreviousMoveDirection = _MovingDirection;
-				RotateCharacter(_MovingDirection);
+
+				if (_CharacterRotateEnabled)
+				{
+					RotateCharacter(_MovingDirection);
+				}
 			}
 		}
 		else
@@ -119,7 +138,8 @@ void AC_MoveableCharacter::SetMazeGrid(TArray <TArray<F_GridData>>* mazeGrid)
 
 		_MazeWidth = _MazeGrid->Num();
 		//DEBUG
-		for (int32 Y = 0; Y < _MazeGrid->Num(); Y++)
+
+		/*for (int32 Y = 0; Y < _MazeGrid->Num(); Y++)
 		{
 			FString RowString;
 
@@ -129,7 +149,7 @@ void AC_MoveableCharacter::SetMazeGrid(TArray <TArray<F_GridData>>* mazeGrid)
 			}
 
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *RowString);
-		}
+		}*/
 	}
 	else
 	{

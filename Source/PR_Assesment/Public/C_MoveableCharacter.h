@@ -37,6 +37,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	void SetTileSize(float tileSize); //Set The Tile Size for Movement Purposes
 	void SetMazeGrid(TArray <TArray<F_GridData>>* mazeGrid); //Get MazeGrid (From LevelLoader)
 	void SetGameManager();
@@ -56,6 +58,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Character", meta = (ToolTip = "Speed of The Character"))
 	float _MoveSpeed = 300;
 	
+	UPROPERTY(EditAnywhere, Category = "Character", meta = (ToolTip = "How quick the character can turn around the corner (Min - 1)"))
+	float _CornerMargin = 1;
+
+	UPROPERTY(EditAnywhere, Category = "Character", meta = (ToolTip = "Will character rotate when changing direction"))
+	bool _CharacterRotateEnabled = true;
 	//SAVE DIRECTION VALUE, TEMP  DONT FORGET TO CHANGE TO ENUM LATER
 	//BASED ON PRIORITY up > left > down.
 	const TArray<FVector2D> _Directions = {

@@ -7,7 +7,7 @@
 #include "I_Collectable.h" 
 #include "C_Pellet.generated.h"
 
-class USphereComponent;
+class UCapsuleComponent;
 
 UCLASS()
 class PR_ASSESMENT_API AC_Pellet : public AActor, public I_Collectable
@@ -27,7 +27,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
-	USphereComponent* _CollisionSphere;
+	UCapsuleComponent* TriggerCapsule;
 
 	UFUNCTION()
 	

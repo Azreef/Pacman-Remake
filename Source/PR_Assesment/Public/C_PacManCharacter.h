@@ -11,7 +11,7 @@
 #include "I_Collectable.h"
 #include "C_PacManCharacter.generated.h"
 
-class USphereComponent;
+class UCapsuleComponent;
 
 UCLASS()
 class PR_ASSESMENT_API AC_PacManCharacter : public AC_MoveableCharacter
@@ -26,7 +26,6 @@ protected:
 
 public:
 	
-
 	AC_PacManCharacter();
 	virtual void Tick(float DeltaTime);
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -39,7 +38,8 @@ public:
 	UInputMappingContext* _MappingContext;
 
 	void MoveInput(const FInputActionValue& Value);
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)override;
+	void NotifyActorBeginOverlap(AActor* OtherActor);
 	void ToggleDebug(const FInputActionValue& movementValue);
 	FVector2D _IntendedDirection;
 
@@ -50,5 +50,5 @@ public:
 	float _IntendedDirectionTimer = 0;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
-	USphereComponent* _CollisionSphere;
+	UCapsuleComponent* TriggerCapsule;
 };
